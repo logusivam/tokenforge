@@ -50,3 +50,11 @@ test-results/
 
 # docs
 docus
+
+err.md
+
+# agent related 
+.gemini/
+
+# AI related
+.claude/

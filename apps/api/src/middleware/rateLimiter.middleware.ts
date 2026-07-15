@@ -8,7 +8,7 @@ import { RATE_LIMIT } from '@/shared/constants'
 export const loginRateLimiter = rateLimit({
   windowMs: RATE_LIMIT.LOGIN_WINDOW_MS,
   max: RATE_LIMIT.LOGIN_MAX,
-  standardHeaders: 'draft-7',     // Sends RateLimit-* headers (RFC 9110 draft)
+  standardHeaders: 'draft-7', // Sends RateLimit-* headers (RFC 9110 draft)
   legacyHeaders: false,
   message: {
     status: 'error',
@@ -16,11 +16,10 @@ export const loginRateLimiter = rateLimit({
     message: 'Too many login attempts. Please try again in 15 minutes.',
   },
   store: new RedisStore({
-    sendCommand: (...args: string[]) => redis.call(...args),
+    sendCommand: async (...args: string[]) => (await redis.call(args[0]!, ...args.slice(1))) as any,
     prefix: 'rl:login:',
   }),
-  keyGenerator: (req) =>
-    req.ip ?? req.headers['x-forwarded-for']?.toString() ?? 'unknown',
+  keyGenerator: (req) => req.ip ?? req.headers['x-forwarded-for']?.toString() ?? 'unknown',
 })
 
 // Register rate limiter — 3 accounts per hour per IP (prevents spam account creation)
@@ -35,11 +34,10 @@ export const registerRateLimiter = rateLimit({
     message: 'Too many registration attempts. Please try again in 1 hour.',
   },
   store: new RedisStore({
-    sendCommand: (...args: string[]) => redis.call(...args),
+    sendCommand: async (...args: string[]) => (await redis.call(args[0]!, ...args.slice(1))) as any,
     prefix: 'rl:register:',
   }),
-  keyGenerator: (req) =>
-    req.ip ?? req.headers['x-forwarded-for']?.toString() ?? 'unknown',
+  keyGenerator: (req) => req.ip ?? req.headers['x-forwarded-for']?.toString() ?? 'unknown',
 })
 
 // General API rate limiter — 100 req/min per IP for all other routes
@@ -49,7 +47,7 @@ export const generalRateLimiter = rateLimit({
   standardHeaders: 'draft-7',
   legacyHeaders: false,
   store: new RedisStore({
-    sendCommand: (...args: string[]) => redis.call(...args),
+    sendCommand: async (...args: string[]) => (await redis.call(args[0]!, ...args.slice(1))) as any,
     prefix: 'rl:general:',
   }),
 })

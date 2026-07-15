@@ -13,7 +13,13 @@ interface GenerateATOptions {
 }
 
 export class TokenService {
-  constructor(private readonly redis: Redis) {}
+  constructor(
+    private readonly redis: Redis,
+    private readonly fetchUserClaims?: (userId: string) => Promise<{
+      role: UserRole
+      permissions: PermissionString[]
+    }>
+  ) {}
 
   // ── Access Token ───────────────────────────────────────────────────
 
@@ -21,7 +27,7 @@ export class TokenService {
     const { privateKey } = getKeys()
     const payload: Omit<JwtPayload, 'iat' | 'exp'> = {
       sub: opts.userId,
-      jti: randomUUID(),             // Unique per token — enables blacklisting
+      jti: randomUUID(), // Unique per token — enables blacklisting
       role: opts.role,
       permissions: opts.permissions,
     }
@@ -34,24 +40,33 @@ export class TokenService {
   verifyAccessToken(token: string): JwtPayload {
     const { publicKey } = getKeys()
     return jwt.verify(token, publicKey, {
-      algorithms: ['RS256'],         // Explicit whitelist — never allow 'none'
+      algorithms: ['RS256'], // Explicit whitelist — never allow 'none'
     }) as JwtPayload
   }
 
   // ── Refresh Token ──────────────────────────────────────────────────
 
-  async generateRefreshToken(userId: string, familyId?: string): Promise<{
+  async generateRefreshToken(
+    userId: string,
+    familyId?: string
+  ): Promise<{
     refreshToken: string
     familyId: string
   }> {
     const token = randomUUID()
-    const fId = familyId ?? randomUUID()   // New family on fresh login
+    const fId = familyId ?? randomUUID() // New family on fresh login
 
     const meta: RefreshTokenMeta = { userId, familyId: fId }
 
     // Atomic pipeline — set token + family reference in one round-trip
-    await this.redis.pipeline()
-      .set(REDIS_KEYS.refreshToken(token), JSON.stringify(meta), 'EX', TOKEN_CONFIG.REFRESH_EXPIRY_SECONDS)
+    await this.redis
+      .pipeline()
+      .set(
+        REDIS_KEYS.refreshToken(token),
+        JSON.stringify(meta),
+        'EX',
+        TOKEN_CONFIG.REFRESH_EXPIRY_SECONDS
+      )
       .set(REDIS_KEYS.tokenFamily(fId), token, 'EX', TOKEN_CONFIG.REFRESH_EXPIRY_SECONDS)
       .exec()
 
@@ -81,7 +96,9 @@ export class TokenService {
     }
 
     // Step 3: Fetch user role + permissions for new AT
-    // (injected via dependency — shown as placeholder here)
+    if (!this.fetchUserClaims) {
+      throw new Error('fetchUserClaims handler must be injected')
+    }
     const { role, permissions } = await this.fetchUserClaims(userId)
 
     // Step 4: Issue new tokens + blacklist old AT jti (caller provides jti)
@@ -96,11 +113,12 @@ export class TokenService {
 
   async revokeRefreshToken(token: string): Promise<void> {
     const raw = await this.redis.get(REDIS_KEYS.refreshToken(token))
-    if (!raw) return  // Already expired or never existed — idempotent
+    if (!raw) return // Already expired or never existed — idempotent
 
     const { familyId }: RefreshTokenMeta = JSON.parse(raw) as RefreshTokenMeta
 
-    await this.redis.pipeline()
+    await this.redis
+      .pipeline()
       .del(REDIS_KEYS.refreshToken(token))
       .del(REDIS_KEYS.tokenFamily(familyId))
       .exec()
@@ -124,9 +142,7 @@ export class TokenService {
     const pipeline = this.redis.pipeline()
 
     do {
-      const [next, keys] = await this.redis.scan(
-        cursor, 'MATCH', `refresh:*`, 'COUNT', 100
-      )
+      const [next, keys] = await this.redis.scan(cursor, 'MATCH', `refresh:*`, 'COUNT', 100)
       cursor = next
 
       // Filter to this family by fetching meta (only way without secondary index)
@@ -142,13 +158,5 @@ export class TokenService {
 
     pipeline.del(REDIS_KEYS.tokenFamily(familyId))
     await pipeline.exec()
-  }
-
-  // Placeholder — in real implementation injected from UserService
-  private async fetchUserClaims(_userId: string): Promise<{
-    role: UserRole
-    permissions: PermissionString[]
-  }> {
-    throw new Error('fetchUserClaims must be injected via constructor')
   }
 }

@@ -38,48 +38,54 @@ export const app = express()
 app.set('trust proxy', env.TRUST_PROXY)
 
 // ── Security middleware ──────────────────────────────────────────────
-app.use(helmet({
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ["'self'"],
-      scriptSrc: ["'self'"],
-      styleSrc: ["'self'", "'unsafe-inline'"],  // Swagger UI needs inline styles
-      imgSrc: ["'self'", 'data:', 'https:'],
-      connectSrc: ["'self'"],
-      fontSrc: ["'self'"],
-      objectSrc: ["'none'"],
-      frameSrc: ["'none'"],
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'"],
+        styleSrc: ["'self'", "'unsafe-inline'"], // Swagger UI needs inline styles
+        imgSrc: ["'self'", 'data:', 'https:'],
+        connectSrc: ["'self'"],
+        fontSrc: ["'self'"],
+        objectSrc: ["'none'"],
+        frameSrc: ["'none'"],
+      },
     },
-  },
-  hsts: {
-    maxAge: 31536000,       // 1 year
-    includeSubDomains: true,
-    preload: true,
-  },
-}))
+    hsts: {
+      maxAge: 31536000, // 1 year
+      includeSubDomains: true,
+      preload: true,
+    },
+  })
+)
 
-app.use(cors({
-  origin: env.CLIENT_URL,         // Exact origin — no wildcard
-  credentials: true,              // Required for httpOnly cookie exchange
-  methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Request-ID'],
-  exposedHeaders: ['X-Request-ID'],
-}))
+app.use(
+  cors({
+    origin: env.CLIENT_URL, // Exact origin — no wildcard
+    credentials: true, // Required for httpOnly cookie exchange
+    methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Request-ID'],
+    exposedHeaders: ['X-Request-ID'],
+  })
+)
 
 // ── Request parsing ──────────────────────────────────────────────────
-app.use(express.json({ limit: '10kb' }))       // Limit body size — prevents large payload attacks
+app.use(express.json({ limit: '10kb' })) // Limit body size — prevents large payload attacks
 app.use(express.urlencoded({ extended: false, limit: '10kb' }))
-app.use(cookieParser(env.COOKIE_SECRET))        // Signed cookie support
+app.use(cookieParser(env.COOKIE_SECRET)) // Signed cookie support
 
 // ── Observability ────────────────────────────────────────────────────
-app.use(requestIdMiddleware)                    // x-request-id on every request
-app.use(morgan('combined', {
-  stream: { write: (msg) => logger.http(msg.trim()) },
-  skip: (req) => req.url === '/api/v1/health', // Don't log health check spam
-}))
+app.use(requestIdMiddleware) // x-request-id on every request
+app.use(
+  morgan('combined', {
+    stream: { write: (msg) => logger.http(msg.trim()) },
+    skip: (req) => req.url === '/api/v1/health', // Don't log health check spam
+  })
+)
 
 // ── Input sanitization ───────────────────────────────────────────────
-app.use(sanitize)                               // mongo-sanitize: strip $ operators
+app.use(sanitize) // mongo-sanitize: strip $ operators
 
 // ── Health check (no auth, no rate limit) ───────────────────────────
 app.get('/api/v1/health', async (_req, res) => {
@@ -88,7 +94,9 @@ app.get('/api/v1/health', async (_req, res) => {
   let redisOk = false
   try {
     redisOk = (await redis.ping()) === 'PONG'
-  } catch { /* Redis unreachable */ }
+  } catch {
+    /* Redis unreachable */
+  }
 
   const healthy = mongoOk && redisOk
   res.status(healthy ? 200 : 503).json({
@@ -103,16 +111,10 @@ app.get('/api/v1/health', async (_req, res) => {
 })
 
 // ── API routes (versioned) ───────────────────────────────────────────
-app.use('/api/v1/auth',  loginRateLimiter, authRouter)
+app.use('/api/v1/auth', loginRateLimiter, authRouter)
 app.use('/api/v1/oauth', oauthRouter)
 app.use('/api/v1/users', usersRouter)
 app.use('/api/v1/admin', adminRouter)
-
-// Swagger UI (development + staging only)
-if (env.NODE_ENV !== 'production') {
-  const { setupSwagger } = await import('@/config/swagger')
-  setupSwagger(app)
-}
 
 // ── 404 handler ──────────────────────────────────────────────────────
 app.use((_req, res) => {
@@ -126,7 +128,13 @@ app.use(errorHandler)
 async function bootstrap(): Promise<void> {
   await connectDB()
   const redis = await connectRedis()
-  app.set('redis', redis)                 // Attach to app for health check + middleware access
+  app.set('redis', redis) // Attach to app for health check + middleware access
+
+  // Swagger UI (development + staging only)
+  if (env.NODE_ENV !== 'production') {
+    const { setupSwagger } = await import('./config/swagger.js')
+    setupSwagger(app)
+  }
 
   const server = app.listen(env.PORT, () => {
     logger.info(`TokenForge API running on port ${env.PORT}`, {
@@ -162,7 +170,7 @@ async function bootstrap(): Promise<void> {
   }
 
   process.on('SIGTERM', () => void shutdown('SIGTERM'))
-  process.on('SIGINT',  () => void shutdown('SIGINT'))
+  process.on('SIGINT', () => void shutdown('SIGINT'))
 
   // Unhandled promise rejections — log and exit (never swallow)
   process.on('unhandledRejection', (reason) => {

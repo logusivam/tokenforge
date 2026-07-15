@@ -1,51 +1,50 @@
-import { useCallback } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { useAuthStore } from '@/store/authStore'
-import { authService } from '@/services/auth.service'
+import { useAuthStore } from '../store/authStore'
+import { authService } from '../services/auth.service'
+import { userService } from '../services/user.service'
 
 export function useAuth() {
-  const store = useAuthStore()
-  const navigate = useNavigate()
+  const { user, accessToken, isAuthenticated, isLoading, setAuth, clearAuth, setLoading } =
+    useAuthStore()
 
-  const login = useCallback(async (email: string, password: string) => {
-    store.setLoading(true)
+  const login = async (email: string, password: string) => {
+    setLoading(true)
     try {
-      const { user, accessToken } = await authService.login(email, password)
-      store.setAuth(user, accessToken)
-      navigate('/dashboard', { replace: true })
-    } finally {
-      store.setLoading(false)
+      const data = await authService.login(email, password)
+      setAuth(data.user, data.accessToken)
+      return data.user
+    } catch (err) {
+      setLoading(false)
+      throw err
     }
-  }, [store, navigate])
+  }
 
-  const logout = useCallback(async () => {
+  const logout = async () => {
+    setLoading(true)
     try {
       await authService.logout()
     } finally {
-      // Always clear local state even if API call fails
-      store.clearAuth()
-      navigate('/login', { replace: true })
+      clearAuth()
     }
-  }, [store, navigate])
+  }
 
-  // Attempt silent refresh on app mount — determines initial auth state
-  const initAuth = useCallback(async () => {
-    store.setLoading(true)
+  const checkSession = async () => {
+    setLoading(true)
     try {
-      const { user, accessToken } = await authService.refresh()
-      store.setAuth(user, accessToken)
-    } catch {
-      // No valid session — user must log in
-      store.clearAuth()
+      const { accessToken } = await authService.refresh()
+      const user = await userService.getMe()
+      setAuth(user, accessToken)
+    } catch (err) {
+      clearAuth()
     }
-  }, [store])
+  }
 
   return {
-    user: store.user,
-    isAuthenticated: store.isAuthenticated,
-    isLoading: store.isLoading,
+    user,
+    accessToken,
+    isAuthenticated,
+    isLoading,
     login,
     logout,
-    initAuth,
+    checkSession,
   }
 }

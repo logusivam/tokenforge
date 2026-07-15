@@ -1,59 +1,56 @@
-import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios'
-import { useAuthStore } from '@/store/authStore'
+import axios from 'axios'
+import { useAuthStore } from '../store/authStore'
 
-const API_URL = import.meta.env.VITE_API_URL as string
+const BASE_URL = (import.meta.env.VITE_API_URL as string) || 'http://localhost:5000/api/v1'
 
 export const api = axios.create({
-  baseURL: `${API_URL}/api/v1`,
-  withCredentials: true,   // Send httpOnly refresh token cookie on refresh calls
-  timeout: 10_000,
-  headers: { 'Content-Type': 'application/json' },
+  baseURL: BASE_URL,
+  withCredentials: true,
 })
 
-// ── Request interceptor — inject access token ──────────────────────
-api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
-  const token = useAuthStore.getState().accessToken
-  if (token && config.headers) {
-    config.headers.Authorization = `Bearer ${token}`
-  }
-  return config
-})
-
-// ── Response interceptor — silent token refresh on 401 ────────────
 let isRefreshing = false
-let failedQueue: Array<{
-  resolve: (token: string) => void
-  reject: (err: unknown) => void
-}> = []
+let refreshSubscribers: ((token: string) => void)[] = []
 
-const processQueue = (error: unknown, token: string | null): void => {
-  failedQueue.forEach(({ resolve, reject }) => {
-    if (error) reject(error)
-    else resolve(token!)
-  })
-  failedQueue = []
+const subscribeTokenRefresh = (cb: (token: string) => void) => {
+  refreshSubscribers.push(cb)
 }
 
+const onRefreshed = (token: string) => {
+  refreshSubscribers.map((cb) => {
+    cb(token)
+  })
+  refreshSubscribers = []
+}
+
+// Request Interceptor: Attach Access Token & Request ID
+api.interceptors.request.use(
+  (config) => {
+    const token = useAuthStore.getState().accessToken
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`
+    }
+    config.headers['x-request-id'] = Math.random().toString(36).substring(2, 15)
+    return config
+  },
+  (error) => Promise.reject(error)
+)
+
+// Response Interceptor: Handle Silent Refresh and Expiry
 api.interceptors.response.use(
   (response) => response,
-  async (error: AxiosError) => {
-    const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean }
+  async (error) => {
+    const originalRequest = error.config
 
-    // Only attempt refresh on 401, only once per request, skip refresh endpoint itself
-    if (
-      error.response?.status === 401 &&
-      !originalRequest._retry &&
-      !originalRequest.url?.includes('/auth/refresh')
-    ) {
+    if (originalRequest.url?.includes('/auth/refresh')) {
+      return Promise.reject(error)
+    }
+
+    if (error.response?.status === 401 && !originalRequest._retry) {
       if (isRefreshing) {
-        // Queue concurrent 401s — resolve after single refresh completes
-        return new Promise((resolve, reject) => {
-          failedQueue.push({
-            resolve: (token) => {
-              originalRequest.headers.Authorization = `Bearer ${token}`
-              resolve(api(originalRequest))
-            },
-            reject,
+        return new Promise((resolve) => {
+          subscribeTokenRefresh((token) => {
+            originalRequest.headers.Authorization = `Bearer ${token}`
+            resolve(api(originalRequest))
           })
         })
       }
@@ -62,23 +59,33 @@ api.interceptors.response.use(
       isRefreshing = true
 
       try {
-        // Cookie is sent automatically (withCredentials: true)
-        const { data } = await api.post<{ accessToken: string }>('/auth/refresh')
-        const newToken = data.accessToken
+        const refreshResponse = await api.post('/auth/refresh')
+        const { accessToken } = refreshResponse.data.data
 
-        useAuthStore.getState().setAccessToken(newToken)
-        processQueue(null, newToken)
+        const meResponse = await api.get('/users/me', {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        })
 
-        originalRequest.headers.Authorization = `Bearer ${newToken}`
-        return api(originalRequest)
-      } catch (refreshError) {
-        // Refresh failed — session expired, force logout
-        processQueue(refreshError, null)
-        useAuthStore.getState().clearAuth()
-        window.location.href = '/login'
-        return Promise.reject(refreshError)
-      } finally {
+        useAuthStore.getState().setAuth(meResponse.data.data, accessToken)
         isRefreshing = false
+        onRefreshed(accessToken)
+
+        originalRequest.headers.Authorization = `Bearer ${accessToken}`
+        return api(originalRequest)
+      } catch (refreshError: any) {
+        isRefreshing = false
+        useAuthStore.getState().clearAuth()
+
+        const isReuse =
+          error.response?.data?.message?.toLowerCase().includes('reuse') ||
+          refreshError.response?.data?.message?.toLowerCase().includes('reuse')
+
+        if (isReuse) {
+          window.location.href = '/security-alert'
+        } else {
+          window.location.href = '/login'
+        }
+        return Promise.reject(refreshError)
       }
     }
 

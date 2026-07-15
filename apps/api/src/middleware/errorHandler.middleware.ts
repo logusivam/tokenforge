@@ -6,15 +6,10 @@ interface ErrorResponse {
   status: 'error'
   statusCode: number
   message: string
-  requestId?: string
+  requestId?: string | undefined
 }
 
-export function errorHandler(
-  err: Error,
-  req: Request,
-  res: Response,
-  _next: NextFunction
-): void {
+export function errorHandler(err: Error, req: Request, res: Response, _next: NextFunction): void {
   const requestId = req.headers['x-request-id'] as string | undefined
 
   if (err instanceof AppError) {
