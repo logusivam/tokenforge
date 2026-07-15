@@ -1,0 +1,18 @@
+version: '3.9'
+
+services:
+  mongodb-test:
+    image: mongo:8
+    container_name: tokenforge-mongo-test
+    ports:
+      - '27018:27017'                    # Different port — avoids dev DB collision
+    tmpfs:
+      - /data/db                         # In-memory for speed, wiped on container stop
+
+  redis-test:
+    image: redis:7-alpine
+    container_name: tokenforge-redis-test
+    ports:
+      - '6380:6379'                      # Different port
+    tmpfs:
+      - /data                            # In-memory, ephemeral

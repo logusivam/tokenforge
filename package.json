@@ -1,0 +1,67 @@
+{
+  "name": "tokenforge",
+  "version": "0.0.0",
+  "private": true,
+  "description": "JWT auth system with refresh token rotation, OAuth2 PKCE, and RBAC — built from scratch",
+  "author": "Dark <logusivam@github>",
+  "license": "MIT",
+  "homepage": "https://tokenforge.dev",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/logusivam/tokenforge.git"
+  },
+  "bugs": {
+    "url": "https://github.com/logusivam/tokenforge/issues"
+  },
+  "engines": {
+    "node": ">=22.0.0",
+    "npm": ">=10.0.0"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "test": "turbo run test",
+    "test:unit": "turbo run test -- --project unit",
+    "test:integration": "turbo run test -- --project integration",
+    "test:e2e": "playwright test",
+    "lint": "turbo run lint",
+    "lint:fix": "turbo run lint -- --fix",
+    "format": "prettier --write \"**/*.{ts,tsx,js,mjs,json,md,yml}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,mjs,json,md,yml}\"",
+    "clean": "turbo run clean && rimraf node_modules",
+    "prepare": "husky",
+    "keys:generate": "bash scripts/generate-keys.sh",
+    "db:seed": "npx tsx apps/api/scripts/seed-db.ts",
+    "db:revoke-all": "npx tsx apps/api/scripts/revoke-all-sessions.ts",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:test": "docker-compose -f docker-compose.test.yml up -d",
+    "release": "semantic-release"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^21.2.1",
+    "@commitlint/config-conventional": "^21.2.0",
+    "@playwright/test": "^1.61.1",
+    "@typescript-eslint/eslint-plugin": "^8.63.0",
+    "@typescript-eslint/parser": "^8.63.0",
+    "eslint": "^10.6.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-security": "^4.0.1",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.0.8",
+    "prettier": "^3.9.5",
+    "rimraf": "^6.1.3",
+    "semantic-release": "^25.0.5",
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^12.0.9",
+    "@semantic-release/commit-analyzer": "^13.0.1",
+    "@semantic-release/release-notes-generator": "^14.1.1",
+    "turbo": "^2.5.4"
+  }
+}

@@ -1,0 +1,22 @@
+# Global fallback — all files require review from a core maintainer
+*                               @logusivam
+
+# Backend auth module — security-critical, requires security review
+apps/api/src/modules/auth/      @logusivam
+apps/api/src/modules/token/     @logusivam
+apps/api/src/modules/oauth/     @logusivam
+apps/api/src/middleware/        @logusivam
+
+# RBAC — permission model changes require admin sign-off
+apps/api/src/modules/rbac/      @logusivam
+
+# CI/CD workflows — pipeline changes require maintainer approval
+.github/workflows/              @logusivam
+
+# Shared types — breaking change risk
+packages/types/                 @logusivam
+
+# Environment + deployment config
+apps/api/.env.example           @logusivam
+apps/web/.env.example           @logusivam
+docker-compose*.yml             @logusivam

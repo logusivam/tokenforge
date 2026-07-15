@@ -1,0 +1,16 @@
+name: Dependency Review
+
+on:
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  dependency-review:
+    name: Block HIGH/CRITICAL CVE Dependencies
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/dependency-review-action@v4
+        with:
+          fail-on-severity: high          # Block high + critical CVEs
+          deny-licenses: GPL-2.0, GPL-3.0 # Block copyleft licenses
