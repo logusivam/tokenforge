@@ -34,15 +34,19 @@ export default defineConfig({
       {
         name: 'unit',
         test: {
-          include: ['tests/unit/**/*.test.ts'],
+          globals: true,
           environment: 'node',
+          passWithNoTests: true,
+          include: ['tests/unit/**/*.test.ts'],
         },
       },
       {
         name: 'integration',
         test: {
-          include: ['tests/integration/**/*.test.ts'],
+          globals: true,
           environment: 'node',
+          passWithNoTests: true,
+          include: ['tests/integration/**/*.test.ts'],
           pool: 'forks', // Isolate each integration test file
           poolOptions: {
             forks: { singleFork: false },
