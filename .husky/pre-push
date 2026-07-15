@@ -1,5 +1,2 @@
-#!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
-
 # Run unit tests only (fast gate — integration tests run in CI)
 npx turbo run test --filter=./apps/api -- --run --reporter=verbose

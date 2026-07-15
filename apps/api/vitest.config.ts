@@ -5,6 +5,7 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'node',
+    passWithNoTests: true,
     setupFiles: ['./tests/fixtures/setup.ts'],
 
     // Coverage — enforced thresholds block CI if not met
@@ -16,8 +17,8 @@ export default defineConfig({
       exclude: [
         'src/**/*.types.ts',
         'src/**/*.schema.ts',
-        'src/server.ts',       // bootstrap — tested via integration
-        'src/config/**',       // env/db/redis — mocked in unit tests
+        'src/server.ts', // bootstrap — tested via integration
+        'src/config/**', // env/db/redis — mocked in unit tests
       ],
       thresholds: {
         statements: 80,
@@ -42,7 +43,7 @@ export default defineConfig({
         test: {
           include: ['tests/integration/**/*.test.ts'],
           environment: 'node',
-          pool: 'forks',        // Isolate each integration test file
+          pool: 'forks', // Isolate each integration test file
           poolOptions: {
             forks: { singleFork: false },
           },
