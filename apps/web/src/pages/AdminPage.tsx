@@ -2,6 +2,7 @@ import React from 'react'
 import { UsersTable } from '../components/admin/UsersTable'
 import { ActiveSessionsTable } from '../components/admin/ActiveSessionsTable'
 import { AuditLogTable } from '../components/admin/AuditLogTable'
+import { RoleManager } from '../components/admin/RoleManager'
 
 export function AdminPage() {
   return (
@@ -23,6 +24,14 @@ export function AdminPage() {
             </h3>
             <UsersTable />
           </div>
+
+          <div className="bg-[#0f172a]/70 border border-slate-800 rounded-xl p-6 backdrop-blur-md flex flex-col gap-4">
+            <h3 className="text-base font-bold text-slate-100 uppercase tracking-wider">
+              RBAC Role Matrix
+            </h3>
+            <RoleManager />
+          </div>
+
           <div className="bg-[#0f172a]/70 border border-slate-800 rounded-xl p-6 backdrop-blur-md flex flex-col gap-4">
             <h3 className="text-base font-bold text-slate-100 uppercase tracking-wider text-rose-400">
               Security Audit Logs
