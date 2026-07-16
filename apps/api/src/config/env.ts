@@ -4,7 +4,7 @@ const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   PORT: z.coerce.number().default(3000),
 
-  MONGO_URI: z.string().url({ message: 'MONGO_URI must be a valid URI' }),
+  MONGO_URI: z.string().min(1, { message: 'MONGO_URI must be set' }),
   REDIS_URL: z.string().url({ message: 'REDIS_URL must be a valid URI' }),
 
   JWT_PRIVATE_KEY: z.string().min(1, 'JWT_PRIVATE_KEY required'),
