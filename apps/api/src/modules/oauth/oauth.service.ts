@@ -38,13 +38,15 @@ export class OAuthService {
     }
   }
 
-  async getVerifierAndValidateState(state: string): Promise<string | null> {
+  async getVerifierAndValidateState(state: string, keepState = false): Promise<string | null> {
     const key = `oauth:state:${state}`
     const verifier = await this.redis.get(key)
     if (!verifier) {
       throw new AppError('Invalid state or state expired', 400)
     }
-    await this.redis.del(key) // One-time use state
+    if (!keepState) {
+      await this.redis.del(key) // One-time use state
+    }
     return verifier === '1' ? null : verifier
   }
 

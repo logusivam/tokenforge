@@ -74,7 +74,7 @@ export function LandingPage() {
   return (
     <div className="min-h-screen bg-[#0A0A0F] text-slate-100 flex flex-col relative overflow-hidden">
       {/* Background patterns */}
-      <div className="absolute inset-0 bg-[radial-gradient(#1e1b4b_1px,transparent_1px)] [background-size:24px_24px] opacity-10" />
+      <div className="absolute inset-0 bg-[radial-gradient(#1e1b4b_1px,transparent_1px)] [background-size:24px_24px] opacity-10 pointer-events-none" />
 
       {/* Sticky Header */}
       <header className="sticky top-0 z-50 h-16 border-b border-[#2A2A3D] bg-[#0A0A0F]/80 backdrop-blur-md px-6 flex items-center justify-between">
@@ -272,84 +272,84 @@ export function LandingPage() {
 
       {/* Global Footer */}
       <footer className="bg-[#0A0A0F] border-t border-[#2A2A3D] py-8 px-6 mt-auto">
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center md:justify-between gap-6">
-          <div className="flex flex-col gap-2 text-center md:text-left">
-            <div className="flex items-center justify-center md:justify-start gap-2">
-              <span className="text-xs font-semibold text-[#F1F5F9] uppercase tracking-widest">
-                TokenForge
-              </span>
+        <div className="max-w-6xl mx-auto flex flex-col items-center gap-6">
+          {/* Main Footer Row */}
+          <div className="w-full flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="flex flex-col gap-1 text-center md:text-left">
+              <div className="flex items-center justify-center md:justify-start gap-2">
+                <span className="text-xs font-semibold text-[#F1F5F9] uppercase tracking-widest">
+                  TokenForge
+                </span>
+              </div>
+              <p className="text-[13px] text-[#94A3B8]">Built by Loganathan G P</p>
+              <p className="text-[12px] text-[#475569]">Logusivam Vision</p>
+
+              {/* Popover triggers */}
+              <div className="flex items-center justify-center md:justify-start gap-4 mt-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setModalOpen('privacy')
+                  }}
+                  className="text-[12px] text-[#475569] hover:text-[#94A3B8] hover:underline transition-colors animate-none"
+                >
+                  Privacy Policy
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setModalOpen('terms')
+                  }}
+                  className="text-[12px] text-[#475569] hover:text-[#94A3B8] hover:underline transition-colors animate-none"
+                >
+                  Terms of Service
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setModalOpen('contact')
+                  }}
+                  className="text-[12px] text-[#475569] hover:text-[#94A3B8] hover:underline transition-colors animate-none"
+                >
+                  Contact
+                </button>
+              </div>
             </div>
 
-            {/* Copyright layout */}
-            <p className="text-xs text-slate-500">
-              © TokenForge{' '}
-              {new Date().getFullYear() > 2026 ? `2026 - ${new Date().getFullYear()}` : '2026'}. All
-              Rights Reserved.
-            </p>
-
-            <p className="text-[13px] text-[#94A3B8]">Built by Loganathan G P</p>
-            <p className="text-[12px] text-[#475569]">Logusivam Vision</p>
-
-            {/* Popover triggers */}
-            <div className="flex items-center justify-center md:justify-start gap-4 mt-2">
-              <button
-                type="button"
-                onClick={() => {
-                  setModalOpen('privacy')
-                }}
-                className="text-[12px] text-[#475569] hover:text-[#94A3B8] hover:underline transition-colors animate-none"
+            {/* Social Links */}
+            <div className="flex items-center gap-4">
+              <a
+                href="https://www.linkedin.com/in/logusivam"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1.5 text-xs text-slate-400 hover:text-indigo-400 transition-colors"
               >
-                Privacy Policy
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setModalOpen('terms')
-                }}
-                className="text-[12px] text-[#475569] hover:text-[#94A3B8] hover:underline transition-colors animate-none"
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.779-1.75-1.75s.784-1.75 1.75-1.75 1.75.779 1.75 1.75-.784 1.75-1.75 1.75zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
+                </svg>
+                LinkedIn
+              </a>
+              <a
+                href="https://github.com/logusivam"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1.5 text-xs text-slate-400 hover:text-indigo-400 transition-colors"
               >
-                Terms of Service
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setModalOpen('contact')
-                }}
-                className="text-[12px] text-[#475569] hover:text-[#94A3B8] hover:underline transition-colors animate-none"
-              >
-                Contact
-              </button>
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path
+                    fillRule="evenodd"
+                    clipRule="evenodd"
+                    d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482C19.138 20.197 22 16.44 22 12.017 22 6.484 17.522 2 12 2z"
+                  />
+                </svg>
+                GitHub
+              </a>
             </div>
           </div>
 
-          {/* Social Links */}
-          <div className="flex items-center gap-4">
-            <a
-              href="https://www.linkedin.com/in/logusivam"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-1.5 text-xs text-slate-400 hover:text-indigo-400 transition-colors"
-            >
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.779-1.75-1.75s.784-1.75 1.75-1.75 1.75.779 1.75 1.75-.784 1.75-1.75 1.75zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
-              </svg>
-              LinkedIn
-            </a>
-            <a
-              href="https://github.com/logusivam"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-1.5 text-xs text-slate-400 hover:text-indigo-400 transition-colors"
-            >
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                <path
-                  fillRule="evenodd"
-                  clipRule="evenodd"
-                  d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482C19.138 20.197 22 16.44 22 12.017 22 6.484 17.522 2 12 2z"
-                />
-              </svg>
-              GitHub
-            </a>
+          {/* Bottom Copyright Text - centered */}
+          <div className="w-full border-t border-[#2A2A3D]/40 pt-4 text-center">
+            <p className="text-xs text-slate-500">©TokenForge 2026. All Rights Reserved.</p>
           </div>
         </div>
       </footer>

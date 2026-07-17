@@ -46,7 +46,7 @@ export class OAuthController {
         throw new AppError('Query parameters code and state are required', 400)
       }
 
-      const codeVerifier = await this.oauthService.getVerifierAndValidateState(state)
+      const codeVerifier = await this.oauthService.getVerifierAndValidateState(state, true)
       if (!codeVerifier) {
         throw new AppError('PKCE verification code missing from state cache', 400)
       }
@@ -83,7 +83,7 @@ export class OAuthController {
         throw new AppError('Query parameters code and state are required', 400)
       }
 
-      await this.oauthService.getVerifierAndValidateState(state)
+      await this.oauthService.getVerifierAndValidateState(state, true)
 
       const {
         user,
