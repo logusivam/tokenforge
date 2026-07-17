@@ -319,7 +319,7 @@ export function LandingPage() {
             {/* Social Links */}
             <div className="flex items-center gap-4">
               <a
-                href="https://www.linkedin.com/in/logusivam"
+                href="https://www.linkedin.com/in/loganathan26"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-1.5 text-xs text-slate-400 hover:text-indigo-400 transition-colors"
