@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Button } from '../components/ui/Button'
+import { useAuthStore } from '../store/authStore'
 
 export function LandingPage() {
   const [activeFaq, setActiveFaq] = useState<number | null>(null)
@@ -71,6 +72,8 @@ export function LandingPage() {
     },
   ]
 
+  const { isAuthenticated } = useAuthStore()
+
   return (
     <div className="min-h-screen bg-[#0A0A0F] text-slate-100 flex flex-col relative overflow-hidden">
       {/* Background patterns */}
@@ -89,16 +92,26 @@ export function LandingPage() {
         </div>
 
         <div className="flex gap-3">
-          <Link to="/login">
-            <Button variant="ghost" className="text-xs">
-              Sign In
-            </Button>
-          </Link>
-          <Link to="/register">
-            <Button variant="primary" className="text-xs">
-              Get Started
-            </Button>
-          </Link>
+          {isAuthenticated ? (
+            <Link to="/dashboard">
+              <Button variant="primary" className="text-xs">
+                Go to Dashboard
+              </Button>
+            </Link>
+          ) : (
+            <>
+              <Link to="/login">
+                <Button variant="ghost" className="text-xs">
+                  Sign In
+                </Button>
+              </Link>
+              <Link to="/register">
+                <Button variant="primary" className="text-xs">
+                  Get Started
+                </Button>
+              </Link>
+            </>
+          )}
         </div>
       </header>
 
@@ -119,11 +132,19 @@ export function LandingPage() {
         </p>
 
         <div className="flex gap-4 mt-2">
-          <Link to="/register">
-            <Button variant="primary" className="px-6 py-3 text-sm">
-              Get Started Free
-            </Button>
-          </Link>
+          {isAuthenticated ? (
+            <Link to="/dashboard">
+              <Button variant="primary" className="px-6 py-3 text-sm">
+                Explore Dashboard →
+              </Button>
+            </Link>
+          ) : (
+            <Link to="/register">
+              <Button variant="primary" className="px-6 py-3 text-sm">
+                Get Started Free
+              </Button>
+            </Link>
+          )}
           <a
             href="https://github.com/logusivam/tokenforge"
             target="_blank"
