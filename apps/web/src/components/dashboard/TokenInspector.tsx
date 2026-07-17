@@ -52,9 +52,22 @@ export function TokenInspector() {
       </div>
 
       <div className="flex flex-col gap-2">
-        <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
-          Raw JWT (Memory-Only)
-        </span>
+        <div className="flex justify-between items-center">
+          <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+            Raw JWT (Memory-Only)
+          </span>
+          {accessToken && (
+            <button
+              onClick={() => {
+                window.navigator.clipboard.writeText(accessToken)
+                window.alert('Token copied to clipboard')
+              }}
+              className="text-[10px] text-indigo-400 hover:text-indigo-300 font-bold tracking-wide uppercase"
+            >
+              Copy Token
+            </button>
+          )}
+        </div>
         <div className="bg-[#020617] border border-slate-800 rounded-lg p-3 text-[11px] font-mono text-indigo-400 break-all select-all max-h-24 overflow-y-auto">
           {accessToken || 'No token active'}
         </div>

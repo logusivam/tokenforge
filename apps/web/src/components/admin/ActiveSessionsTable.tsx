@@ -23,7 +23,7 @@ export function ActiveSessionsTable() {
           <div className="grid grid-cols-2 gap-4">
             <div className="bg-[#0b0f19] border border-slate-800 p-4 rounded-lg flex flex-col gap-1">
               <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">
-                Active Sessions (Redis)
+                Active Sessions
               </span>
               <span className="text-2xl font-extrabold text-indigo-400">
                 {stats?.activeSessions || 0}
@@ -31,10 +31,26 @@ export function ActiveSessionsTable() {
             </div>
             <div className="bg-[#0b0f19] border border-slate-800 p-4 rounded-lg flex flex-col gap-1">
               <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">
-                Registered Users (MongoDB)
+                Total Users
               </span>
               <span className="text-2xl font-extrabold text-emerald-400">
                 {stats?.totalUsers || 0}
+              </span>
+            </div>
+            <div className="bg-[#0b0f19] border border-slate-800 p-4 rounded-lg flex flex-col gap-1">
+              <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">
+                OAuth Users
+              </span>
+              <span className="text-2xl font-extrabold text-amber-400">
+                {stats?.oauthUsers || 0}
+              </span>
+            </div>
+            <div className="bg-[#0b0f19] border border-slate-800 p-4 rounded-lg flex flex-col gap-1">
+              <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">
+                Admin Users
+              </span>
+              <span className="text-2xl font-extrabold text-rose-400">
+                {stats?.adminUsers || 1}
               </span>
             </div>
           </div>

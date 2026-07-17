@@ -8,7 +8,7 @@ export function UnauthorizedPage() {
       {/* Background decoration */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-indigo-500/5 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="z-10 flex flex-col items-center max-w-md">
+      <div className="z-10 flex flex-col items-center max-w-md bg-[#12121A] border border-[#2A2A3D] rounded-2xl p-8 backdrop-blur-xl shadow-2xl">
         <div className="w-20 h-20 rounded-full bg-indigo-500/10 border border-indigo-500/30 flex items-center justify-center text-indigo-400 text-3xl mb-6 shadow-[0_0_30px_rgba(99,102,241,0.2)]">
           {/* Lock Icon */}
           <svg
@@ -26,16 +26,16 @@ export function UnauthorizedPage() {
         </div>
 
         <h1 className="text-3xl font-extrabold text-[#F1F5F9] uppercase tracking-widest mb-2">
-          401 - Session Expired
+          401 Unauthorized
         </h1>
+        <h2 className="text-lg font-bold text-indigo-400 mb-2">Session Expired</h2>
         <p className="text-sm text-[#94A3B8] mb-8 leading-relaxed">
-          Your secure token session has ended or is invalid. Please sign in again to verify your
-          cryptographic identity.
+          Your session has ended. Please sign in again.
         </p>
 
         <Link to="/login" className="w-full">
           <Button variant="primary" className="w-full justify-center">
-            Sign In Securely
+            Sign In
           </Button>
         </Link>
       </div>
