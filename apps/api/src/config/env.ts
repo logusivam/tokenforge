@@ -26,6 +26,10 @@ const envSchema = z.object({
 
   TRUST_PROXY: z.coerce.number().default(0),
   SENTRY_DSN: z.string().optional(),
+
+  GOOGLE_CLIENT_ID_MAIL: z.string().min(1, 'GOOGLE_CLIENT_ID_MAIL required'),
+  GOOGLE_CLIENT_SECRET_MAIL: z.string().min(1, 'GOOGLE_CLIENT_SECRET_MAIL required'),
+  GMAIL_REFRESH_TOKEN_MAIL: z.string().min(1, 'GMAIL_REFRESH_TOKEN_MAIL required'),
 })
 
 // Throw at startup if any required env var is missing

@@ -17,11 +17,11 @@ import { requestIdMiddleware } from '@/middleware/requestId.middleware'
 import { loginRateLimiter } from '@/middleware/rateLimiter.middleware'
 import { sanitize } from '@/middleware/sanitize.middleware'
 
-// Route modules
 import { authRouter } from '@/modules/auth/auth.routes'
 import { oauthRouter } from '@/modules/oauth/oauth.routes'
 import { usersRouter } from '@/modules/users/user.routes'
 import { adminRouter } from '@/modules/admin/admin.routes'
+import { supportRouter } from '@/modules/support/support.routes'
 
 // ── Sentry (must init before express) ──────────────────────────────
 if (env.SENTRY_DSN) {
@@ -116,6 +116,7 @@ app.use('/api/v1/auth', loginRateLimiter, authRouter)
 app.use('/api/v1/oauth', oauthRouter)
 app.use('/api/v1/users', usersRouter)
 app.use('/api/v1/admin', adminRouter)
+app.use('/api/v1/support', supportRouter)
 
 // ── 404 handler ──────────────────────────────────────────────────────
 app.use((_req, res) => {

@@ -22,5 +22,7 @@ const oauthController = new OAuthController(oauthService, auditService)
 
 oauthRouter.get('/google', oauthController.googleInit)
 oauthRouter.get('/google/callback', oauthController.googleCallback)
+oauthRouter.post('/google/callback', oauthController.googleExchange)
 oauthRouter.get('/github', oauthController.githubInit)
 oauthRouter.get('/github/callback', oauthController.githubCallback)
+oauthRouter.post('/github/callback', oauthController.githubExchange)

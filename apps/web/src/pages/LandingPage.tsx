@@ -4,6 +4,9 @@ import { Button } from '../components/ui/Button'
 
 export function LandingPage() {
   const [activeFaq, setActiveFaq] = useState<number | null>(null)
+  const [modalOpen, setModalOpen] = useState<'privacy' | 'terms' | 'contact' | null>(null)
+  const [contactSuccess, setContactSuccess] = useState('')
+  const [contactError, setContactError] = useState('')
 
   const faqs = [
     {
@@ -248,6 +251,7 @@ export function LandingPage() {
               className="border border-[#2A2A3D] rounded-xl bg-[#12121A] overflow-hidden"
             >
               <button
+                type="button"
                 className="w-full text-left p-5 font-semibold text-sm md:text-base flex justify-between items-center transition hover:bg-slate-800/20 text-slate-200"
                 onClick={() => {
                   setActiveFaq(activeFaq === idx ? null : idx)
@@ -268,38 +272,312 @@ export function LandingPage() {
 
       {/* Global Footer */}
       <footer className="bg-[#0A0A0F] border-t border-[#2A2A3D] py-8 px-6 mt-auto">
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center md:justify-between gap-4">
-          <div className="flex flex-col gap-1 text-center md:text-left">
+        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center md:justify-between gap-6">
+          <div className="flex flex-col gap-2 text-center md:text-left">
             <div className="flex items-center justify-center md:justify-start gap-2">
               <span className="text-xs font-semibold text-[#F1F5F9] uppercase tracking-widest">
                 TokenForge
               </span>
             </div>
+
+            {/* Copyright layout */}
+            <p className="text-xs text-slate-500">
+              © TokenForge{' '}
+              {new Date().getFullYear() > 2026 ? `2026 - ${new Date().getFullYear()}` : '2026'}. All
+              Rights Reserved.
+            </p>
+
             <p className="text-[13px] text-[#94A3B8]">Built by Loganathan G P</p>
             <p className="text-[12px] text-[#475569]">Logusivam Vision</p>
-            <div className="flex items-center justify-center md:justify-start gap-4 mt-1">
-              {['Privacy Policy', 'Terms of Service', 'Contact'].map((label) => (
-                <a
-                  key={label}
-                  href={`/${label.toLowerCase().replace(' ', '-')}`}
-                  className="text-[12px] text-[#475569] hover:text-[#94A3B8] hover:underline transition-colors"
-                >
-                  {label}
-                </a>
-              ))}
+
+            {/* Popover triggers */}
+            <div className="flex items-center justify-center md:justify-start gap-4 mt-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setModalOpen('privacy')
+                }}
+                className="text-[12px] text-[#475569] hover:text-[#94A3B8] hover:underline transition-colors animate-none"
+              >
+                Privacy Policy
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setModalOpen('terms')
+                }}
+                className="text-[12px] text-[#475569] hover:text-[#94A3B8] hover:underline transition-colors animate-none"
+              >
+                Terms of Service
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setModalOpen('contact')
+                }}
+                className="text-[12px] text-[#475569] hover:text-[#94A3B8] hover:underline transition-colors animate-none"
+              >
+                Contact
+              </button>
             </div>
           </div>
 
-          <a
-            href="https://www.linkedin.com/in/logusivam"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-1.5 text-[13px] text-[#6366F1] hover:text-[#4F46E5] hover:underline transition-colors"
-          >
-            LinkedIn
-          </a>
+          {/* Social Links */}
+          <div className="flex items-center gap-4">
+            <a
+              href="https://www.linkedin.com/in/logusivam"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 text-xs text-slate-400 hover:text-indigo-400 transition-colors"
+            >
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.779-1.75-1.75s.784-1.75 1.75-1.75 1.75.779 1.75 1.75-.784 1.75-1.75 1.75zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
+              </svg>
+              LinkedIn
+            </a>
+            <a
+              href="https://github.com/logusivam"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 text-xs text-slate-400 hover:text-indigo-400 transition-colors"
+            >
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path
+                  fillRule="evenodd"
+                  clipRule="evenodd"
+                  d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482C19.138 20.197 22 16.44 22 12.017 22 6.484 17.522 2 12 2z"
+                />
+              </svg>
+              GitHub
+            </a>
+          </div>
         </div>
       </footer>
+
+      {/* Popover Modals */}
+      {modalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div className="relative w-full max-w-lg bg-[#12121A] border border-[#2A2A3D] rounded-xl p-6 shadow-2xl flex flex-col gap-4 max-h-[85vh] overflow-y-auto">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between border-b border-[#2A2A3D] pb-3">
+              <h3 className="text-lg font-bold text-slate-100 uppercase tracking-wider">
+                {modalOpen === 'privacy' && 'Privacy Policy'}
+                {modalOpen === 'terms' && 'Terms of Service'}
+                {modalOpen === 'contact' && 'Contact Support'}
+              </h3>
+              <button
+                type="button"
+                onClick={() => {
+                  setModalOpen(null)
+                  setContactSuccess('')
+                  setContactError('')
+                }}
+                className="text-slate-400 hover:text-slate-200 text-xl font-bold"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Privacy Policy Content */}
+            {modalOpen === 'privacy' && (
+              <div className="text-sm text-slate-400 flex flex-col gap-3 leading-relaxed">
+                <p>
+                  At TokenForge, we respect your cryptographic identity privacy. We only process
+                  session data, authorization parameters, and audit logging metrics explicitly
+                  generated to safeguard account actions.
+                </p>
+                <p>
+                  We store authentication credentials securely using cryptographic hashing standards
+                  (bcrypt) and asymmetrical encryption signatures (RS256). We never sell your
+                  personal information.
+                </p>
+              </div>
+            )}
+
+            {/* Terms Content */}
+            {modalOpen === 'terms' && (
+              <div className="text-sm text-slate-400 flex flex-col gap-3 leading-relaxed">
+                <p>
+                  By accessing TokenForge, you agree to protect the security of your private keys
+                  and credentials. Unauthorized exploitation, credential sharing, or token
+                  manipulation is strictly prohibited.
+                </p>
+                <p>
+                  All software is provided "as is", without warranty of any kind, express or
+                  implied.
+                </p>
+              </div>
+            )}
+
+            {/* Contact Form Content */}
+            {modalOpen === 'contact' && (
+              <ContactForm
+                onClose={() => {
+                  setModalOpen(null)
+                }}
+                successMsg={contactSuccess}
+                setSuccessMsg={setContactSuccess}
+                errorMsg={contactError}
+                setErrorMsg={setContactError}
+              />
+            )}
+
+            {/* Close Button for non-contact modals */}
+            {modalOpen !== 'contact' && (
+              <div className="flex justify-end mt-2">
+                <Button
+                  variant="secondary"
+                  onClick={() => {
+                    setModalOpen(null)
+                  }}
+                >
+                  Close
+                </Button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
+  )
+}
+
+interface ContactFormProps {
+  onClose: () => void
+  successMsg: string
+  setSuccessMsg: (msg: string) => void
+  errorMsg: string
+  setErrorMsg: (msg: string) => void
+}
+
+function ContactForm({
+  onClose,
+  successMsg,
+  setSuccessMsg,
+  errorMsg,
+  setErrorMsg,
+}: ContactFormProps) {
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [message, setMessage] = useState('')
+  const [submitting, setSubmitting] = useState(false)
+
+  const handleContactSubmit = async (e: React.SyntheticEvent) => {
+    e.preventDefault()
+    if (name.trim().length < 2 || name.trim().length > 100) {
+      setErrorMsg('Name must be between 2 and 100 characters.')
+      return
+    }
+    if (message.trim().length < 10 || message.trim().length > 1000) {
+      setErrorMsg('Message must be between 10 and 1000 characters.')
+      return
+    }
+
+    setSubmitting(true)
+    setSuccessMsg('')
+    setErrorMsg('')
+
+    try {
+      // POST to backend contact form API
+      const response = await window.fetch('http://localhost:5000/api/v1/support/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name, email, message }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Support enquiry submission failed')
+      }
+
+      setSuccessMsg('Your support enquiry was sent successfully.')
+      setName('')
+      setEmail('')
+      setMessage('')
+    } catch (err: any) {
+      setErrorMsg(err.message || 'Failed to submit contact enquiry. Try again.')
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  return (
+    <form onSubmit={handleContactSubmit} className="flex flex-col gap-4 w-full">
+      {successMsg && (
+        <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs rounded-lg">
+          {successMsg}
+        </div>
+      )}
+
+      {errorMsg && (
+        <div className="p-3 bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs rounded-lg">
+          {errorMsg}
+        </div>
+      )}
+
+      <div className="flex flex-col gap-1.5">
+        <label className="text-xs uppercase tracking-wider text-slate-400 font-semibold">
+          Name (2-100 characters)
+        </label>
+        <input
+          type="text"
+          value={name}
+          onChange={(e) => {
+            setName(e.target.value)
+          }}
+          required
+          maxLength={100}
+          className="w-full px-4 py-2 bg-[#0b0f19]/80 border border-slate-800 rounded-lg text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/20 transition duration-200"
+          placeholder="Enter display name"
+        />
+        <span className="text-[10px] text-slate-500 text-right">{name.length}/100</span>
+      </div>
+
+      <div className="flex flex-col gap-1.5">
+        <label className="text-xs uppercase tracking-wider text-slate-400 font-semibold">
+          Email Address
+        </label>
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => {
+            setEmail(e.target.value)
+          }}
+          required
+          className="w-full px-4 py-2 bg-[#0b0f19]/80 border border-slate-800 rounded-lg text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/20 transition duration-200"
+          placeholder="you@example.com"
+        />
+      </div>
+
+      <div className="flex flex-col gap-1.5">
+        <label className="text-xs uppercase tracking-wider text-slate-400 font-semibold">
+          Message (10-1000 characters)
+        </label>
+        <textarea
+          value={message}
+          onChange={(e) => {
+            setMessage(e.target.value)
+          }}
+          required
+          maxLength={1000}
+          rows={4}
+          className="w-full px-4 py-2 bg-[#0b0f19]/80 border border-slate-800 rounded-lg text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/20 transition duration-200 resize-none"
+          placeholder="Type your support message..."
+        />
+        <span className="text-[10px] text-slate-500 text-right">{message.length}/1000</span>
+      </div>
+
+      <div className="flex gap-2 justify-end border-t border-[#2A2A3D] pt-4 mt-2">
+        <Button variant="secondary" onClick={onClose} disabled={submitting}>
+          Cancel
+        </Button>
+        <Button type="submit" isLoading={submitting} disabled={submitting}>
+          Submit Enquiry
+        </Button>
+      </div>
+    </form>
   )
 }
