@@ -4,14 +4,17 @@ import { useAuthStore } from '../store/authStore'
 import { useAuth } from '../hooks/useAuth'
 
 export function ProtectedRoute() {
-  const { isAuthenticated, isLoading } = useAuthStore()
+  const { isAuthenticated, isLoading, setLoading } = useAuthStore()
   const { checkSession } = useAuth()
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      checkSession()
+    // Only attempt silent refresh check if the user is not authenticated and app is not currently checking
+    if (!isAuthenticated && isLoading) {
+      checkSession().finally(() => {
+        setLoading(false)
+      })
     }
-  }, [isAuthenticated])
+  }, [isAuthenticated, isLoading])
 
   if (isLoading) {
     return (
