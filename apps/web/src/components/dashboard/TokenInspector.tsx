@@ -7,6 +7,7 @@ export function TokenInspector() {
   const { accessToken } = useAuthStore()
   const [secondsLeft, setSecondsLeft] = useState(0)
   const [totalDuration, setTotalDuration] = useState(900)
+  const [copied, setCopied] = useState(false)
 
   const payload = accessToken ? decodeJwt(accessToken) : null
 
@@ -60,11 +61,14 @@ export function TokenInspector() {
             <button
               onClick={() => {
                 window.navigator.clipboard.writeText(accessToken)
-                window.alert('Token copied to clipboard')
+                setCopied(true)
+                setTimeout(() => {
+                  setCopied(false)
+                }, 2000)
               }}
               className="text-[10px] text-indigo-400 hover:text-indigo-300 font-bold tracking-wide uppercase"
             >
-              Copy Token
+              {copied ? 'Copied ✓' : 'Copy Token'}
             </button>
           )}
         </div>

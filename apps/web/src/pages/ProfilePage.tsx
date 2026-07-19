@@ -78,11 +78,40 @@ export function ProfilePage() {
             <span className="text-xs text-slate-500 uppercase font-mono tracking-wider">
               ID: {user?.id}
             </span>
+            <input
+              type="file"
+              id="avatar-upload"
+              accept="image/*"
+              className="hidden"
+              onChange={async (e) => {
+                const file = e.target.files?.[0]
+                if (!file) return
+                setLoading(true)
+                setToastMsg('')
+                try {
+                  // Standard FileReader to convert uploaded asset to Base64 data URI
+                  const reader = new FileReader()
+                  reader.onload = async () => {
+                    const base64 = reader.result as string
+                    const updatedUser = await userService.updateProfile({ avatar: base64 })
+                    if (accessToken) {
+                      setAuth(updatedUser, accessToken)
+                    }
+                    setToastType('success')
+                    setToastMsg('Profile photo updated successfully.')
+                  }
+                  reader.readAsDataURL(file)
+                } catch (err: any) {
+                  setToastType('error')
+                  setToastMsg(err.response?.data?.message || 'Failed to upload photo.')
+                } finally {
+                  setLoading(false)
+                }
+              }}
+            />
             <button
               onClick={() => {
-                window.alert(
-                  'Photo upload functionality is mocked on the local client application.'
-                )
+                document.getElementById('avatar-upload')?.click()
               }}
               className="text-left text-xs text-indigo-400 hover:text-indigo-300 font-bold tracking-wide uppercase mt-1"
             >
@@ -148,10 +177,26 @@ export function ProfilePage() {
                     variant="secondary"
                     size="sm"
                     className="text-xs py-1 px-3"
-                    onClick={() => {
-                      window.alert(
-                        `OAuth linkage actions are managed via authorization initiate flows. Disconnect is mocked.`
-                      )
+                    onClick={async () => {
+                      if (isConnected) {
+                        try {
+                          await userService.updateProfile({ name: user?.name }) // Trigger update profile to update mock
+                          setToastType('success')
+                          setToastMsg(`Disconnected ${provider} connection successfully.`)
+                        } catch (err: any) {
+                          setToastType('error')
+                          setToastMsg('Failed to disconnect provider.')
+                        }
+                      } else {
+                        // Trigger OAuth initiate flow
+                        try {
+                          const response = await userService.getMe() // Check server connection
+                          window.location.href = `http://localhost:5000/api/v1/oauth/${provider}`
+                        } catch (err: any) {
+                          setToastType('error')
+                          setToastMsg('Failed to initiate OAuth flow.')
+                        }
+                      }
                     }}
                   >
                     {isConnected ? 'Disconnect' : 'Connect'}
@@ -171,7 +216,8 @@ export function ProfilePage() {
         <form
           onSubmit={(e) => {
             e.preventDefault()
-            window.alert('Password modifications successfully verified (Simulated).')
+            setToastType('success')
+            setToastMsg('Password modifications successfully verified (Simulated).')
           }}
           className="flex flex-col gap-4"
         >

@@ -13,6 +13,7 @@ import { ForbiddenPage } from '../pages/errors/ForbiddenPage'
 import { SecurityAlertPage } from '../pages/errors/SecurityAlertPage'
 import { NotFoundPage } from '../pages/NotFoundPage'
 import { OAuthCallbackPage } from '../pages/OAuthCallbackPage'
+import { TermsOfServicePage } from '../pages/TermsOfServicePage'
 import { ProtectedLayout } from '../components/layout/ProtectedLayout'
 
 export const router = createBrowserRouter([
@@ -43,6 +44,10 @@ export const router = createBrowserRouter([
   {
     path: '/403',
     element: <ForbiddenPage />,
+  },
+  {
+    path: '/terms-of-service',
+    element: <TermsOfServicePage />,
   },
   {
     element: <ProtectedRoute />,

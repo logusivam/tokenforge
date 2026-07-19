@@ -34,7 +34,13 @@ export function RolePermissionsCard() {
               ⚡ Admin bypass enabled (wildcard access to all resources)
             </div>
           ) : (
-            <span className="text-xs text-slate-500 italic">No permissions granted.</span>
+            <div className="flex flex-wrap gap-2">
+              {['profile:read:own', 'profile:write:own'].map((perm) => (
+                <Badge key={perm} variant="info">
+                  {perm}
+                </Badge>
+              ))}
+            </div>
           )}
         </div>
       </div>

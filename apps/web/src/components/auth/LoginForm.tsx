@@ -74,7 +74,7 @@ export function LoginForm() {
         <div className="relative">
           <Input
             label="Password"
-            type={showPassword ? 'text' : 'password'}
+            type="password"
             placeholder="••••••••"
             error={errors.password?.message}
             {...register('password', {
@@ -82,15 +82,6 @@ export function LoginForm() {
               minLength: { value: 8, message: 'Password must be at least 8 characters' },
             })}
           />
-          <button
-            type="button"
-            onClick={() => {
-              setShowPassword(!showPassword)
-            }}
-            className="absolute right-3 top-[38px] text-xs text-slate-400 hover:text-slate-200 transition"
-          >
-            {showPassword ? 'Hide' : 'Show'}
-          </button>
         </div>
 
         <div className="flex items-center justify-between text-xs py-1">
@@ -102,18 +93,6 @@ export function LoginForm() {
             />
             <span className="text-slate-400">Remember Me</span>
           </label>
-          <a
-            href="/forgot-password"
-            onClick={(e) => {
-              e.preventDefault()
-              window.alert(
-                'Password recovery flow is not in backend scope. Please use registration to create test accounts.'
-              )
-            }}
-            className="text-indigo-400 hover:underline"
-          >
-            Forgot Password?
-          </a>
         </div>
 
         <Button type="submit" isLoading={loading} className="w-full mt-2">

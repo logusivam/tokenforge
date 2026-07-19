@@ -22,6 +22,7 @@ import { oauthRouter } from '@/modules/oauth/oauth.routes'
 import { usersRouter } from '@/modules/users/user.routes'
 import { adminRouter } from '@/modules/admin/admin.routes'
 import { supportRouter } from '@/modules/support/support.routes'
+import { seedRbac } from '@/modules/rbac/rbac.seed'
 
 // ── Sentry (must init before express) ──────────────────────────────
 if (env.SENTRY_DSN) {
@@ -129,6 +130,7 @@ app.use(errorHandler)
 // ── Bootstrap ───────────────────────────────────────────────────────
 async function bootstrap(): Promise<void> {
   await connectDB()
+  await seedRbac()
   const redis = await connectRedis()
   app.set('redis', redis) // Attach to app for health check + middleware access
 

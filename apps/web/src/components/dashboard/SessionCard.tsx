@@ -94,8 +94,8 @@ export function SessionCard() {
         <div className="flex flex-col gap-2.5 border-t border-slate-800/60 pt-4 text-xs text-slate-400">
           <div className="flex justify-between items-center">
             <span>Primary Role:</span>
-            <span className="font-bold text-indigo-400 bg-indigo-500/10 border border-indigo-500/25 px-2 py-0.5 rounded uppercase">
-              {user?.role}
+            <span className="font-bold text-indigo-400 bg-indigo-500/10 border border-indigo-500/25 px-2 py-0.5 rounded uppercase font-mono">
+              {user?.role || 'user'}
             </span>
           </div>
 
@@ -119,13 +119,15 @@ export function SessionCard() {
 
           <div className="flex justify-between items-center border-t border-slate-800/40 pt-2.5">
             <span>Refresh Token ID:</span>
-            <span className="font-mono text-slate-300">rt_uuid_Opaque...</span>
+            <span className="font-mono text-slate-350 bg-slate-900 px-1.5 py-0.5 rounded border border-slate-800">
+              rt_uuid_{payload?.jti?.slice(0, 8) || 'active'}
+            </span>
           </div>
 
           <div className="flex justify-between items-center">
             <span>Token Family ID:</span>
-            <span className="font-mono text-slate-300">
-              {payload?.jti?.slice(0, 8) || 'family_id'}...
+            <span className="font-mono text-slate-350 bg-slate-900 px-1.5 py-0.5 rounded border border-slate-800">
+              {payload?.jti?.slice(0, 16) || 'active_family_line'}
             </span>
           </div>
         </div>

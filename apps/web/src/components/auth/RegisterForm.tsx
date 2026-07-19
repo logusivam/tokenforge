@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { authService } from '../../services/auth.service'
 import { Input } from '../ui/Input'
 import { Button } from '../ui/Button'
@@ -92,7 +92,7 @@ export function RegisterForm() {
         <div className="relative">
           <Input
             label="Password"
-            type={showPassword ? 'text' : 'password'}
+            type="password"
             placeholder="••••••••"
             error={errors.password?.message}
             {...register('password', {
@@ -100,15 +100,6 @@ export function RegisterForm() {
               minLength: { value: 8, message: 'Password must be at least 8 characters' },
             })}
           />
-          <button
-            type="button"
-            onClick={() => {
-              setShowPassword(!showPassword)
-            }}
-            className="absolute right-3 top-[38px] text-xs text-slate-400 hover:text-slate-200 transition"
-          >
-            {showPassword ? 'Hide' : 'Show'}
-          </button>
         </div>
 
         <Input
@@ -131,9 +122,9 @@ export function RegisterForm() {
           />
           <span className="text-xs text-slate-400 leading-normal">
             I agree to the{' '}
-            <a href="/terms-of-service" className="text-indigo-400 hover:underline">
+            <Link to="/terms-of-service" className="text-indigo-400 hover:underline">
               Terms of Service
-            </a>
+            </Link>
           </span>
         </label>
 
