@@ -3,10 +3,15 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { adminService } from '../../services/admin.service'
 import { Button } from '../ui/Button'
 import { Spinner } from '../ui/Spinner'
+import { usePermission } from '../../hooks/usePermission'
 
 export function UsersTable() {
   const queryClient = useQueryClient()
+  const { hasPermission } = usePermission()
   const [page, setPage] = useState(1)
+
+  const canWriteRoles = hasPermission('users:write')
+  const canDeleteSessions = hasPermission('sessions:delete')
 
   const { data, isLoading } = useQuery({
     queryKey: ['adminUsers', page],
@@ -44,7 +49,7 @@ export function UsersTable() {
               <th className="p-4">Name</th>
               <th className="p-4">Email</th>
               <th className="p-4">Role</th>
-              <th className="p-4 text-right">Actions</th>
+              {canDeleteSessions && <th className="p-4 text-right">Actions</th>}
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-800 text-sm">
@@ -56,10 +61,11 @@ export function UsersTable() {
                   <td className="p-4">
                     <select
                       value={u.roles[0] || 'user'}
+                      disabled={!canWriteRoles}
                       onChange={(e) => {
                         roleMutation.mutate({ userId: u.id, role: e.target.value })
                       }}
-                      className="bg-[#0b0f19] border border-slate-800 text-slate-200 text-xs rounded p-1 focus:outline-none focus:border-indigo-500"
+                      className="bg-[#0b0f19] border border-slate-800 text-slate-200 text-xs rounded p-1 focus:outline-none focus:border-indigo-500 disabled:opacity-60 disabled:cursor-not-allowed"
                     >
                       <option value="user">User</option>
                       <option value="moderator">Moderator</option>
@@ -67,18 +73,20 @@ export function UsersTable() {
                       <option value="guest">Guest</option>
                     </select>
                   </td>
-                  <td className="p-4 text-right">
-                    <Button
-                      variant="danger"
-                      className="text-xs px-2.5 py-1 ml-auto"
-                      onClick={() => {
-                        revokeMutation.mutate(u.id)
-                      }}
-                      isLoading={revokeMutation.isPending && revokeMutation.variables === u.id}
-                    >
-                      Revoke Sessions
-                    </Button>
-                  </td>
+                  {canDeleteSessions && (
+                    <td className="p-4 text-right">
+                      <Button
+                        variant="danger"
+                        className="text-xs px-2.5 py-1 ml-auto"
+                        onClick={() => {
+                          revokeMutation.mutate(u.id)
+                        }}
+                        isLoading={revokeMutation.isPending && revokeMutation.variables === u.id}
+                      >
+                        Revoke Sessions
+                      </Button>
+                    </td>
+                  )}
                 </tr>
               ))
             ) : (

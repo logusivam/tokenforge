@@ -3,19 +3,23 @@ import { UsersTable } from '../components/admin/UsersTable'
 import { ActiveSessionsTable } from '../components/admin/ActiveSessionsTable'
 import { AuditLogTable } from '../components/admin/AuditLogTable'
 import { RoleManager } from '../components/admin/RoleManager'
+import { usePermission } from '../hooks/usePermission'
 
 export function AdminPage() {
+  const { hasPermission } = usePermission()
   const [activeTab, setActiveTab] = useState<'overview' | 'users' | 'roles' | 'audit' | 'sessions'>(
     'overview'
   )
 
   const menuItems = [
-    { id: 'overview', label: 'Dashboard Overview' },
-    { id: 'users', label: 'Users Manager' },
-    { id: 'roles', label: 'Roles & Permissions' },
-    { id: 'audit', label: 'Audit Logs' },
-    { id: 'sessions', label: 'Active Sessions' },
+    { id: 'overview', label: 'Dashboard Overview', visible: true },
+    { id: 'users', label: 'Users Manager', visible: hasPermission('users:read') },
+    { id: 'roles', label: 'Roles & Permissions', visible: hasPermission('roles:read') },
+    { id: 'audit', label: 'Audit Logs', visible: hasPermission('audit:read') },
+    { id: 'sessions', label: 'Active Sessions', visible: hasPermission('roles:read') }, // Gated to roles:read or equivalent admin-only permission
   ] as const
+
+  const visibleMenuItems = menuItems.filter((item) => item.visible)
 
   return (
     <div className="flex flex-col gap-6">
@@ -29,7 +33,7 @@ export function AdminPage() {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
         {/* Sidebar Nav */}
         <div className="lg:col-span-1 bg-[#12121A] border border-slate-800 rounded-xl p-4 flex flex-col gap-2">
-          {menuItems.map((item) => (
+          {visibleMenuItems.map((item) => (
             <button
               key={item.id}
               onClick={() => {
@@ -73,7 +77,7 @@ export function AdminPage() {
             </div>
           )}
 
-          {activeTab === 'users' && (
+          {activeTab === 'users' && hasPermission('users:read') && (
             <div className="bg-[#12121A] border border-slate-800 rounded-xl p-6 flex flex-col gap-4">
               <h3 className="text-base font-bold text-slate-100 uppercase tracking-wider">
                 System Users
@@ -82,7 +86,7 @@ export function AdminPage() {
             </div>
           )}
 
-          {activeTab === 'roles' && (
+          {activeTab === 'roles' && hasPermission('roles:read') && (
             <div className="bg-[#12121A] border border-slate-800 rounded-xl p-6 flex flex-col gap-4">
               <h3 className="text-base font-bold text-slate-100 uppercase tracking-wider">
                 RBAC Role Matrix
@@ -91,7 +95,7 @@ export function AdminPage() {
             </div>
           )}
 
-          {activeTab === 'audit' && (
+          {activeTab === 'audit' && hasPermission('audit:read') && (
             <div className="bg-[#12121A] border border-slate-800 rounded-xl p-6 flex flex-col gap-4">
               <h3 className="text-base font-bold text-slate-100 uppercase tracking-wider text-rose-450">
                 Security Audit Logs
@@ -100,7 +104,7 @@ export function AdminPage() {
             </div>
           )}
 
-          {activeTab === 'sessions' && (
+          {activeTab === 'sessions' && hasPermission('roles:read') && (
             <div className="grid grid-cols-1 gap-6">
               <ActiveSessionsTable />
             </div>
