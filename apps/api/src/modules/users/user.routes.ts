@@ -16,6 +16,7 @@ const updateMeSchema = Joi.object({
   name: Joi.string().min(2).max(100).optional().trim(),
   avatar: Joi.string().uri().optional().allow(''),
   password: Joi.string().min(8).optional(),
+  oldPassword: Joi.string().optional(),
 })
 
 usersRouter.use(requireAuth)

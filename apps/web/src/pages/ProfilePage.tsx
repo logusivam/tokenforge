@@ -268,8 +268,11 @@ export function ProfilePage() {
             setLoading(true)
             setToastMsg('')
             try {
-              // Submit password patch update payload to the backend
-              const updatedUser = await userService.updateProfile({ password: newPass })
+              // Submit password patch update payload to the backend with old password verifier
+              const updatedUser = await userService.updateProfile({
+                password: newPass,
+                oldPassword: oldPass,
+              })
               if (accessToken) {
                 setAuth(updatedUser, accessToken)
               }

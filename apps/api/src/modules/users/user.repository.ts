@@ -5,6 +5,10 @@ export class UserRepository {
     return UserModel.findById(id)
   }
 
+  async findByIdWithPassword(id: string): Promise<IUser | null> {
+    return UserModel.findById(id).select('+passwordHash')
+  }
+
   async findByEmail(email: string): Promise<IUser | null> {
     return UserModel.findOne({ email })
   }
