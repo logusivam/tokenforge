@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Button } from '../components/ui/Button'
 import { useAuthStore } from '../store/authStore'
+import { config } from '../config'
 
 export function LandingPage() {
   const [activeFaq, setActiveFaq] = useState<number | null>(null)
@@ -500,7 +501,7 @@ function ContactForm({
 
     try {
       // POST to backend contact form API
-      const response = await window.fetch('http://localhost:5000/api/v1/support/contact', {
+      const response = await window.fetch(`${config.API_URL}/support/contact`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
