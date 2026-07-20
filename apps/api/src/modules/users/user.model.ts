@@ -31,7 +31,11 @@ const UserSchema = new Schema<IUser>(
     timestamps: true,
     // Never return passwordHash in JSON responses
     toJSON: {
+      virtuals: true,
       transform: (_doc, ret: Record<string, any>) => {
+        ret.id = ret._id.toString()
+        ret.role = ret.roles?.[0] || 'user'
+        delete ret._id
         delete ret.passwordHash
         delete ret.__v
         return ret

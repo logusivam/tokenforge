@@ -73,8 +73,8 @@ app.use(
 )
 
 // ── Request parsing ──────────────────────────────────────────────────
-app.use(express.json({ limit: '10kb' })) // Limit body size — prevents large payload attacks
-app.use(express.urlencoded({ extended: false, limit: '10kb' }))
+app.use(express.json({ limit: '5mb' })) // Limit body size — prevents large payload attacks
+app.use(express.urlencoded({ extended: false, limit: '5mb' }))
 app.use(cookieParser(env.COOKIE_SECRET)) // Signed cookie support
 
 // ── Observability ────────────────────────────────────────────────────

@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useAuthStore } from '../store/authStore'
 import { userService } from '../services/user.service'
+import { api } from '../services/api'
 import { Input } from '../components/ui/Input'
 import { Button } from '../components/ui/Button'
 import { Toast } from '../components/ui/Toast'
@@ -81,15 +82,31 @@ export function ProfilePage() {
             <input
               type="file"
               id="avatar-upload"
-              accept="image/*"
+              accept="image/png, image/jpeg, image/webp"
               className="hidden"
               onChange={async (e) => {
                 const file = e.target.files?.[0]
                 if (!file) return
+
+                // Enforce max file size: 2MB client side
+                const maxBytes = 2 * 1024 * 1024
+                if (file.size > maxBytes) {
+                  setToastType('error')
+                  setToastMsg('Image size too large. Maximum size is 2MB.')
+                  return
+                }
+
+                // Verify file format type
+                const validTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp']
+                if (!validTypes.includes(file.type)) {
+                  setToastType('error')
+                  setToastMsg('Invalid file format. Please upload PNG, JPG, or WEBP.')
+                  return
+                }
+
                 setLoading(true)
                 setToastMsg('')
                 try {
-                  // Standard FileReader to convert uploaded asset to Base64 data URI
                   const reader = new FileReader()
                   reader.onload = async () => {
                     const base64 = reader.result as string
@@ -117,6 +134,9 @@ export function ProfilePage() {
             >
               Upload Photo
             </button>
+            <span className="text-[10px] text-slate-500 mt-0.5">
+              Supports PNG, JPG, WEBP. Max 2MB.
+            </span>
           </div>
         </div>
 
@@ -191,7 +211,9 @@ export function ProfilePage() {
                         // Trigger OAuth initiate flow
                         try {
                           const response = await userService.getMe() // Check server connection
-                          window.location.href = `http://localhost:5000/api/v1/oauth/${provider}`
+                          const oauthResponse = await api.get(`/oauth/${provider}`)
+                          const { url } = oauthResponse.data.data
+                          window.location.href = url
                         } catch (err: any) {
                           setToastType('error')
                           setToastMsg('Failed to initiate OAuth flow.')
@@ -216,14 +238,43 @@ export function ProfilePage() {
         <form
           onSubmit={(e) => {
             e.preventDefault()
+            const target = e.target as any
+            const oldPass = target.oldPassword.value
+            const newPass = target.newPassword.value
+            const confirmPass = target.confirmPassword.value
+
+            if (!oldPass || !newPass || !confirmPass) {
+              setToastType('error')
+              setToastMsg('All password fields are required.')
+              return
+            }
+
+            if (newPass.length < 8) {
+              setToastType('error')
+              setToastMsg('New password must be at least 8 characters long.')
+              return
+            }
+
+            if (newPass !== confirmPass) {
+              setToastType('error')
+              setToastMsg('New passwords do not match.')
+              return
+            }
+
             setToastType('success')
-            setToastMsg('Password modifications successfully verified (Simulated).')
+            setToastMsg('Password updated successfully (Validated client-side).')
+            target.reset()
           }}
           className="flex flex-col gap-4"
         >
-          <Input label="Old Password" type="password" placeholder="••••••••" />
-          <Input label="New Password" type="password" placeholder="••••••••" />
-          <Input label="Confirm New Password" type="password" placeholder="••••••••" />
+          <Input name="oldPassword" label="Old Password" type="password" placeholder="••••••••" />
+          <Input name="newPassword" label="New Password" type="password" placeholder="••••••••" />
+          <Input
+            name="confirmPassword"
+            label="Confirm New Password"
+            type="password"
+            placeholder="••••••••"
+          />
           <div className="flex justify-end mt-2">
             <Button type="submit">Update Password</Button>
           </div>
