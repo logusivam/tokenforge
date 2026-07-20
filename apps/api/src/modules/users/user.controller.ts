@@ -28,12 +28,12 @@ export class UserController {
       if (!req.user) {
         throw new AppError('Not authenticated', 401)
       }
-      const { name, avatar } = req.body
-      const user = await this.userService.updateProfile(req.user.sub, { name, avatar })
+      const { name, avatar, password } = req.body
+      const user = await this.userService.updateProfile(req.user.sub, { name, avatar, password })
 
       await this.auditService.log({
         userId: req.user.sub,
-        event: AuditEvent.PROFILE_UPDATED,
+        event: password ? AuditEvent.PASSWORD_CHANGED : AuditEvent.PROFILE_UPDATED,
         ip: req.ip || 'unknown',
         userAgent: req.headers['user-agent'] || 'unknown',
         requestId: req.headers['x-request-id'] as string,

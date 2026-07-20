@@ -15,6 +15,7 @@ const userController = new UserController(userService, auditService)
 const updateMeSchema = Joi.object({
   name: Joi.string().min(2).max(100).optional().trim(),
   avatar: Joi.string().uri().optional().allow(''),
+  password: Joi.string().min(8).optional(),
 })
 
 usersRouter.use(requireAuth)

@@ -13,8 +13,17 @@ export class UserService {
     return user
   }
 
-  async updateProfile(id: string, updateData: { name?: string; avatar?: string }): Promise<IUser> {
-    const user = await this.userRepo.update(id, updateData)
+  async updateProfile(
+    id: string,
+    updateData: { name?: string; avatar?: string; password?: string }
+  ): Promise<IUser> {
+    const dataToUpdate: any = { ...updateData }
+    if (updateData.password) {
+      const bcrypt = await import('bcryptjs')
+      dataToUpdate.passwordHash = await bcrypt.default.hash(updateData.password, 12)
+      delete dataToUpdate.password
+    }
+    const user = await this.userRepo.update(id, dataToUpdate)
     if (!user) {
       throw new AppError('User not found', 404)
     }

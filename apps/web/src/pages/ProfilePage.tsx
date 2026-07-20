@@ -71,8 +71,12 @@ export function ProfilePage() {
 
       <div className="bg-[#0f172a]/70 border border-slate-800 rounded-xl p-6 backdrop-blur-md flex flex-col gap-6">
         <div className="flex items-center gap-4">
-          <div className="w-16 h-16 rounded-full bg-indigo-600/20 border-2 border-indigo-500 flex items-center justify-center text-xl font-bold text-indigo-400 shadow-[0_0_20px_rgba(99,102,241,0.2)]">
-            {user?.name?.slice(0, 2).toUpperCase() || 'US'}
+          <div className="w-16 h-16 rounded-full bg-indigo-600/20 border-2 border-indigo-500 flex items-center justify-center text-xl font-bold text-indigo-400 shadow-[0_0_20px_rgba(99,102,241,0.2)] overflow-hidden">
+            {user?.avatar ? (
+              <img src={user.avatar} alt="Avatar" className="w-full h-full object-cover" />
+            ) : (
+              user?.name?.slice(0, 2).toUpperCase() || 'US'
+            )}
           </div>
           <div className="flex flex-col gap-1">
             <h3 className="text-lg font-bold text-slate-200">{user?.name}</h3>
@@ -182,12 +186,12 @@ export function ProfilePage() {
             return (
               <div
                 key={provider}
-                className="flex justify-between items-center bg-[#0b0f19] border border-slate-850 p-4 rounded-lg"
+                className="flex flex-col sm:flex-row gap-3 sm:gap-0 justify-between sm:items-center bg-[#0b0f19] border border-slate-850 p-4 rounded-lg"
               >
                 <span className="text-xs font-bold uppercase text-slate-200 tracking-wider">
                   {provider}
                 </span>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 justify-between sm:justify-start">
                   <span
                     className={`text-xs px-2 py-0.5 rounded font-semibold ${isConnected ? 'bg-emerald-500/10 border border-emerald-500/20 text-emerald-400' : 'bg-slate-800/40 text-slate-500'}`}
                   >
@@ -236,7 +240,7 @@ export function ProfilePage() {
           Change Password
         </h3>
         <form
-          onSubmit={(e) => {
+          onSubmit={async (e) => {
             e.preventDefault()
             const target = e.target as any
             const oldPass = target.oldPassword.value
@@ -261,9 +265,23 @@ export function ProfilePage() {
               return
             }
 
-            setToastType('success')
-            setToastMsg('Password updated successfully (Validated client-side).')
-            target.reset()
+            setLoading(true)
+            setToastMsg('')
+            try {
+              // Submit password patch update payload to the backend
+              const updatedUser = await userService.updateProfile({ password: newPass })
+              if (accessToken) {
+                setAuth(updatedUser, accessToken)
+              }
+              setToastType('success')
+              setToastMsg('Password updated successfully.')
+              target.reset()
+            } catch (err: any) {
+              setToastType('error')
+              setToastMsg(err.response?.data?.message || 'Failed to update password.')
+            } finally {
+              setLoading(false)
+            }
           }}
           className="flex flex-col gap-4"
         >
@@ -276,7 +294,9 @@ export function ProfilePage() {
             placeholder="••••••••"
           />
           <div className="flex justify-end mt-2">
-            <Button type="submit">Update Password</Button>
+            <Button type="submit" isLoading={loading}>
+              Update Password
+            </Button>
           </div>
         </form>
       </div>

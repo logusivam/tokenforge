@@ -3,7 +3,11 @@ import { NavLink } from 'react-router-dom'
 import { useAuthStore } from '../../store/authStore'
 import { usePermission } from '../../hooks/usePermission'
 
-export function Sidebar() {
+interface SidebarProps {
+  onClose?: () => void
+}
+
+export function Sidebar({ onClose }: SidebarProps) {
   const { user } = useAuthStore()
   const { hasAnyPermission } = usePermission()
 
@@ -18,13 +22,13 @@ export function Sidebar() {
     }`
 
   return (
-    <aside className="w-64 border-r border-slate-800 bg-[#0f172a]/45 min-h-screen fixed left-0 top-16 pt-6 px-4 z-30">
+    <aside className="w-64 border-r border-slate-800 bg-[#0f172a] md:bg-[#0f172a]/45 min-h-screen fixed left-0 top-16 pt-6 px-4 z-30">
       <div className="flex flex-col gap-2">
         <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest px-4 mb-2">
           Main Navigation
         </span>
 
-        <NavLink to="/dashboard" className={linkClass}>
+        <NavLink to="/dashboard" onClick={onClose} className={linkClass}>
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path
               strokeLinecap="round"
@@ -36,7 +40,7 @@ export function Sidebar() {
           Security Dashboard
         </NavLink>
 
-        <NavLink to="/profile" className={linkClass}>
+        <NavLink to="/profile" onClick={onClose} className={linkClass}>
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path
               strokeLinecap="round"
@@ -54,7 +58,7 @@ export function Sidebar() {
               Administration
             </span>
 
-            <NavLink to="/admin" className={linkClass}>
+            <NavLink to="/admin" onClick={onClose} className={linkClass}>
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path
                   strokeLinecap="round"
