@@ -203,18 +203,28 @@ export function ProfilePage() {
                     className="text-xs py-1 px-3"
                     onClick={async () => {
                       if (isConnected) {
+                        // Disconnect — call the real unlink API
                         try {
-                          await userService.updateProfile({ name: user?.name }) // Trigger update profile to update mock
+                          setLoading(true)
+                          const updatedUser = await api.delete(`/users/me/providers/${provider}`)
+                          if (accessToken) {
+                            setAuth(updatedUser.data.data, accessToken)
+                          }
                           setToastType('success')
-                          setToastMsg(`Disconnected ${provider} connection successfully.`)
+                          setToastMsg(
+                            `${provider.charAt(0).toUpperCase() + provider.slice(1)} account disconnected successfully.`
+                          )
                         } catch (err: any) {
                           setToastType('error')
-                          setToastMsg('Failed to disconnect provider.')
+                          setToastMsg(
+                            err.response?.data?.message || 'Failed to disconnect provider.'
+                          )
+                        } finally {
+                          setLoading(false)
                         }
                       } else {
-                        // Trigger OAuth initiate flow
+                        // Connect — trigger OAuth initiation flow
                         try {
-                          const response = await userService.getMe() // Check server connection
                           const oauthResponse = await api.get(`/oauth/${provider}`)
                           const { url } = oauthResponse.data.data
                           window.location.href = url

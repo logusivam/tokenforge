@@ -35,6 +35,11 @@ const UserSchema = new Schema<IUser>(
       transform: (_doc, ret: Record<string, any>) => {
         ret.id = ret._id.toString()
         ret.role = ret.roles?.[0] || 'user'
+        // Build linkedProviders so the frontend can show which OAuth accounts are connected
+        const linked: string[] = []
+        if (ret.googleId) linked.push('google')
+        if (ret.githubId) linked.push('github')
+        ret.linkedProviders = linked
         delete ret._id
         delete ret.passwordHash
         delete ret.__v

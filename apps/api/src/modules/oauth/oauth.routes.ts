@@ -18,7 +18,7 @@ const oauthService = new OAuthService(
   googleProvider,
   githubProvider
 )
-const oauthController = new OAuthController(oauthService, auditService)
+const oauthController = new OAuthController(oauthService, auditService, tokenService)
 
 oauthRouter.get('/google', oauthController.googleInit)
 oauthRouter.get('/google/callback', oauthController.googleCallback)

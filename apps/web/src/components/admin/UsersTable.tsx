@@ -50,14 +50,14 @@ export function UsersTable() {
           <tbody className="divide-y divide-slate-800 text-sm">
             {data?.users && data.users.length > 0 ? (
               data.users.map((u: any) => (
-                <tr key={u._id} className="hover:bg-slate-800/20">
+                <tr key={u.id} className="hover:bg-slate-800/20">
                   <td className="p-4 font-medium text-slate-200">{u.name}</td>
                   <td className="p-4 text-slate-400">{u.email}</td>
                   <td className="p-4">
                     <select
                       value={u.roles[0] || 'user'}
                       onChange={(e) => {
-                        roleMutation.mutate({ userId: u._id, role: e.target.value })
+                        roleMutation.mutate({ userId: u.id, role: e.target.value })
                       }}
                       className="bg-[#0b0f19] border border-slate-800 text-slate-200 text-xs rounded p-1 focus:outline-none focus:border-indigo-500"
                     >
@@ -72,9 +72,9 @@ export function UsersTable() {
                       variant="danger"
                       className="text-xs px-2.5 py-1 ml-auto"
                       onClick={() => {
-                        revokeMutation.mutate(u._id)
+                        revokeMutation.mutate(u.id)
                       }}
-                      isLoading={revokeMutation.isPending && revokeMutation.variables === u._id}
+                      isLoading={revokeMutation.isPending && revokeMutation.variables === u.id}
                     >
                       Revoke Sessions
                     </Button>

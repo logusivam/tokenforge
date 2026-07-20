@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuthStore } from '../store/authStore'
 import { api } from '../services/api'
@@ -8,11 +8,19 @@ import { Button } from '../components/ui/Button'
 export function OAuthCallbackPage() {
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
-  const { setAuth } = useAuthStore()
-  const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading')
+  const { setAuth, accessToken: existingToken, isAuthenticated } = useAuthStore()
+  const [status, setStatus] = useState<'loading' | 'success' | 'linked' | 'error'>('loading')
   const [errorMsg, setErrorMsg] = useState('')
 
+  // Guard: prevent the exchange from firing twice under React 18 StrictMode
+  // (StrictMode mounts → unmounts → remounts in dev, causing useEffect to run twice)
+  const exchangedRef = useRef(false)
+
   useEffect(() => {
+    // One-shot: if we already fired the exchange, do nothing on the second run
+    if (exchangedRef.current) return
+    exchangedRef.current = true
+
     const code = searchParams.get('code')
     const state = searchParams.get('state')
     const error = searchParams.get('error')
@@ -39,13 +47,22 @@ export function OAuthCallbackPage() {
 
     const exchangeCode = async () => {
       try {
-        const response = await api.post(`/oauth/${provider}/callback`, { code, state })
+        // Snapshot auth state BEFORE the async call (stale closure safety)
+        const wasAlreadyLoggedIn = isAuthenticated && !!existingToken
+
+        // If user is already authenticated, pass their token so the backend links the account
+        const headers: Record<string, string> = {}
+        if (wasAlreadyLoggedIn) {
+          headers['Authorization'] = `Bearer ${existingToken}`
+        }
+        const response = await api.post(`/oauth/${provider}/callback`, { code, state }, { headers })
         const { accessToken, user } = response.data.data
         setAuth(user, accessToken)
-        setStatus('success')
+        setStatus(wasAlreadyLoggedIn ? 'linked' : 'success')
         setTimeout(() => {
-          navigate('/')
-        }, 2000)
+          // If this was an account linking (user was already logged in), go back to profile
+          navigate(wasAlreadyLoggedIn ? '/profile' : '/')
+        }, 1500)
       } catch (err: any) {
         setStatus('error')
         setErrorMsg(err.response?.data?.message || 'Authentication code exchange failed.')
@@ -77,10 +94,22 @@ export function OAuthCallbackPage() {
               ✓
             </div>
             <h2 className="text-xl font-bold text-[#F1F5F9] uppercase tracking-wider">
-              Verification Successful
+              Authentication Successful
             </h2>
-            <p className="text-sm text-emerald-400 font-medium">
-              Redirecting to secure dashboard in 2s...
+            <p className="text-sm text-emerald-400 font-medium">Redirecting to dashboard...</p>
+          </div>
+        )}
+
+        {status === 'linked' && (
+          <div className="flex flex-col items-center gap-4">
+            <div className="w-16 h-16 rounded-full bg-indigo-500/10 border border-indigo-500/30 flex items-center justify-center text-indigo-400 text-3xl shadow-[0_0_20px_rgba(99,102,241,0.2)]">
+              🔗
+            </div>
+            <h2 className="text-xl font-bold text-[#F1F5F9] uppercase tracking-wider">
+              Account Linked
+            </h2>
+            <p className="text-sm text-indigo-400 font-medium">
+              Provider connected. Returning to profile...
             </p>
           </div>
         )}

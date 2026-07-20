@@ -75,33 +75,57 @@ export class OAuthService {
 
   async handleGoogleCallback(
     code: string,
-    codeVerifier: string
+    codeVerifier: string,
+    existingUserId?: string
   ): Promise<{
     user: IUser
     accessToken: string
     refreshToken: string
   }> {
-    const { accessToken: providerToken } = await this.googleProvider.getTokens(code, codeVerifier)
-    const profile = await this.googleProvider.getUserProfile(providerToken)
+    let providerToken: string
+    let profile: Awaited<ReturnType<typeof this.googleProvider.getUserProfile>>
+    try {
+      const tokens = await this.googleProvider.getTokens(code, codeVerifier)
+      providerToken = tokens.accessToken
+      profile = await this.googleProvider.getUserProfile(providerToken)
+    } catch (err: any) {
+      const msg =
+        err?.response?.data?.error_description ||
+        err?.response?.data?.error ||
+        err?.message ||
+        'Google token exchange failed'
+      throw new AppError(msg, 400)
+    }
 
-    let user = await this.userRepo.findByEmail(profile.email)
-    if (!user) {
-      const createData: Partial<IUser> = {
-        email: profile.email,
-        name: profile.name,
-        googleId: profile.id,
-        roles: ['user'],
-        isActive: true,
-        emailVerified: profile.email_verified,
-      }
-      if (profile.picture) {
-        createData.avatar = profile.picture
-      }
-      user = await this.userRepo.create(createData)
+    let user: IUser
+
+    // If already logged in, link to that user directly
+    if (existingUserId) {
+      const foundUser = await this.userRepo.findById(existingUserId)
+      if (!foundUser) throw new AppError('Authenticated user not found', 404)
+      foundUser.googleId = profile.id
+      if (profile.picture && !foundUser.avatar) foundUser.avatar = profile.picture
+      await foundUser.save()
+      user = foundUser
     } else {
-      user.googleId = profile.id
-      if (profile.picture) user.avatar = profile.picture
-      await user.save()
+      const foundUser = await this.userRepo.findByEmail(profile.email)
+      if (!foundUser) {
+        const createData: Partial<IUser> = {
+          email: profile.email,
+          name: profile.name,
+          googleId: profile.id,
+          roles: ['user'],
+          isActive: true,
+          emailVerified: profile.email_verified,
+        }
+        if (profile.picture) createData.avatar = profile.picture
+        user = await this.userRepo.create(createData)
+      } else {
+        foundUser.googleId = profile.id
+        if (profile.picture) foundUser.avatar = profile.picture
+        await foundUser.save()
+        user = foundUser
+      }
     }
 
     const primaryRole = user.roles[0] || 'user'
@@ -117,37 +141,65 @@ export class OAuthService {
     return { user, accessToken, refreshToken }
   }
 
-  async handleGitHubCallback(code: string): Promise<{
+  async handleGitHubCallback(
+    code: string,
+    existingUserId?: string
+  ): Promise<{
     user: IUser
     accessToken: string
     refreshToken: string
   }> {
-    const { accessToken: providerToken } = await this.githubProvider.getTokens(code)
-    const profile = await this.githubProvider.getUserProfile(providerToken)
-
-    if (!profile.email) {
-      throw new AppError('Email address not provided by GitHub', 400)
+    let providerToken: string
+    let profile: Awaited<ReturnType<typeof this.githubProvider.getUserProfile>>
+    try {
+      const tokens = await this.githubProvider.getTokens(code)
+      providerToken = tokens.accessToken
+      profile = await this.githubProvider.getUserProfile(providerToken)
+    } catch (err: any) {
+      const msg =
+        err?.response?.data?.error_description ||
+        err?.response?.data?.error ||
+        err?.message ||
+        'GitHub token exchange failed'
+      throw new AppError(msg, 400)
     }
 
-    // Upsert User
-    let user = await this.userRepo.findByEmail(profile.email)
-    if (!user) {
-      const createData: Partial<IUser> = {
-        email: profile.email,
-        name: profile.name || 'GitHub User',
-        githubId: profile.id.toString(),
-        roles: ['user'],
-        isActive: true,
-        emailVerified: true,
-      }
-      if (profile.avatar_url) {
-        createData.avatar = profile.avatar_url
-      }
-      user = await this.userRepo.create(createData)
+    if (!profile.email) {
+      throw new AppError(
+        'Email address not provided by GitHub. Please make your GitHub email public.',
+        400
+      )
+    }
+
+    let user: IUser
+
+    // If already logged in, link to that user directly
+    if (existingUserId) {
+      const foundUser = await this.userRepo.findById(existingUserId)
+      if (!foundUser) throw new AppError('Authenticated user not found', 404)
+      foundUser.githubId = profile.id.toString()
+      if (profile.avatar_url && !foundUser.avatar) foundUser.avatar = profile.avatar_url
+      await foundUser.save()
+      user = foundUser
     } else {
-      user.githubId = profile.id.toString()
-      if (profile.avatar_url) user.avatar = profile.avatar_url
-      await user.save()
+      const foundUser = await this.userRepo.findByEmail(profile.email)
+      if (!foundUser) {
+        const createData: Partial<IUser> = {
+          email: profile.email,
+          name: profile.name || 'GitHub User',
+          githubId: profile.id.toString(),
+          roles: ['user'],
+          isActive: true,
+          emailVerified: true,
+        }
+        if (profile.avatar_url) createData.avatar = profile.avatar_url
+        user = await this.userRepo.create(createData)
+      } else {
+        foundUser.githubId = profile.id.toString()
+        if (profile.avatar_url) foundUser.avatar = profile.avatar_url
+        await foundUser.save()
+        user = foundUser
+      }
     }
 
     const primaryRole = user.roles[0] || 'user'

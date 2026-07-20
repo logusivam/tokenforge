@@ -71,4 +71,30 @@ export class UserController {
       next(err)
     }
   }
+
+  unlinkProvider = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      if (!req.user) {
+        throw new AppError('Not authenticated', 401)
+      }
+      const { provider } = req.params
+      if (provider !== 'google' && provider !== 'github') {
+        throw new AppError('Invalid provider. Must be google or github.', 400)
+      }
+      const user = await this.userService.unlinkProvider(req.user.sub, provider)
+
+      await this.auditService.log({
+        userId: req.user.sub,
+        event: AuditEvent.PROFILE_UPDATED,
+        ip: req.ip || 'unknown',
+        userAgent: req.headers['user-agent'] || 'unknown',
+        requestId: req.headers['x-request-id'] as string,
+        metadata: { action: 'oauth_unlink', provider },
+      })
+
+      success(res, user)
+    } catch (err) {
+      next(err)
+    }
+  }
 }

@@ -73,7 +73,14 @@ export class AdminController {
     try {
       const totalUsers = await UserModel.countDocuments()
       const activeSessions = await this.adminService.getActiveSessionsCount()
-      success(res, { totalUsers, activeSessions })
+      const oauthUsers = await UserModel.countDocuments({
+        $or: [
+          { googleId: { $exists: true, $ne: null } },
+          { githubId: { $exists: true, $ne: null } },
+        ],
+      })
+      const adminUsers = await UserModel.countDocuments({ roles: 'admin' })
+      success(res, { totalUsers, activeSessions, oauthUsers, adminUsers })
     } catch (err) {
       next(err)
     }

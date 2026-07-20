@@ -14,7 +14,19 @@ const userController = new UserController(userService, auditService)
 
 const updateMeSchema = Joi.object({
   name: Joi.string().min(2).max(100).optional().trim(),
-  avatar: Joi.string().uri().optional().allow(''),
+  // Allow regular URLs and base64 data URIs (for avatar uploads)
+  avatar: Joi.string()
+    .optional()
+    .allow('')
+    .custom((value, helpers) => {
+      if (!value) return value
+      const isDataUri = /^data:image\/(png|jpeg|jpg|webp);base64,/.test(value)
+      const isUrl = /^https?:\/\/.+/.test(value)
+      if (!isDataUri && !isUrl) {
+        return helpers.error('any.invalid')
+      }
+      return value
+    }, 'avatar URL or data URI'),
   password: Joi.string().min(8).optional(),
   oldPassword: Joi.string().optional(),
 })
@@ -29,3 +41,8 @@ usersRouter.patch(
   userController.updateMe
 )
 usersRouter.delete('/me', requirePermission('profile:delete:own'), userController.deleteMe)
+usersRouter.delete(
+  '/me/providers/:provider',
+  requirePermission('profile:write:own'),
+  userController.unlinkProvider
+)

@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
 import { OAuthService } from './oauth.service'
+import { TokenService } from '../token/token.service'
 import { success } from '@/shared/response'
 import { COOKIE_OPTIONS, AuditEvent } from '@/shared/constants'
 import { AuditService } from '../audit/audit.service'
@@ -9,8 +10,22 @@ import { env } from '@/config/env'
 export class OAuthController {
   constructor(
     private readonly oauthService: OAuthService,
-    private readonly auditService: AuditService
+    private readonly auditService: AuditService,
+    private readonly tokenService?: TokenService
   ) {}
+
+  /** Safely extract userId from a Bearer token without throwing */
+  private extractUserIdFromAuthHeader(req: Request): string | undefined {
+    try {
+      const authHeader = req.headers.authorization
+      if (!authHeader || !authHeader.startsWith('Bearer ')) return undefined
+      const token = authHeader.slice(7)
+      const payload = this.tokenService?.verifyAccessToken(token)
+      return payload?.sub ?? undefined
+    } catch {
+      return undefined
+    }
+  }
 
   googleInit = async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -90,9 +105,13 @@ export class OAuthController {
         throw new AppError('PKCE verification code missing from state cache', 400)
       }
 
+      // If an authenticated user initiated this (account linking), extract their userId
+      const existingUserId = this.extractUserIdFromAuthHeader(req)
+
       const { user, accessToken, refreshToken } = await this.oauthService.handleGoogleCallback(
         code,
-        codeVerifier
+        codeVerifier,
+        existingUserId
       )
 
       res.cookie('refreshToken', refreshToken, COOKIE_OPTIONS)
@@ -103,7 +122,7 @@ export class OAuthController {
         ip: req.ip || 'unknown',
         userAgent: req.headers['user-agent'] || 'unknown',
         requestId: req.headers['x-request-id'] as string,
-        metadata: { provider: 'google' },
+        metadata: { provider: 'google', linked: !!existingUserId },
       })
 
       success(res, { accessToken, user })
@@ -121,7 +140,13 @@ export class OAuthController {
 
       await this.oauthService.getVerifierAndValidateState(state)
 
-      const { user, accessToken, refreshToken } = await this.oauthService.handleGitHubCallback(code)
+      // If an authenticated user initiated this (account linking), extract their userId
+      const existingUserId = this.extractUserIdFromAuthHeader(req)
+
+      const { user, accessToken, refreshToken } = await this.oauthService.handleGitHubCallback(
+        code,
+        existingUserId
+      )
 
       res.cookie('refreshToken', refreshToken, COOKIE_OPTIONS)
 
@@ -131,7 +156,7 @@ export class OAuthController {
         ip: req.ip || 'unknown',
         userAgent: req.headers['user-agent'] || 'unknown',
         requestId: req.headers['x-request-id'] as string,
-        metadata: { provider: 'github' },
+        metadata: { provider: 'github', linked: !!existingUserId },
       })
 
       success(res, { accessToken, user })

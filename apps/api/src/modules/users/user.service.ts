@@ -1,6 +1,6 @@
 import { UserRepository } from './user.repository'
-import { IUser } from './user.model'
-import { AppError } from '@/shared/errors'
+import { IUser, UserModel } from './user.model'
+import { AppError, ConflictError } from '@/shared/errors'
 
 export class UserService {
   constructor(private readonly userRepo: UserRepository) {}
@@ -56,5 +56,30 @@ export class UserService {
     if (!user) {
       throw new AppError('User not found', 404)
     }
+  }
+
+  async unlinkProvider(userId: string, provider: 'google' | 'github'): Promise<IUser> {
+    const user = await this.userRepo.findByIdWithPassword(userId)
+    if (!user) throw new AppError('User not found', 404)
+
+    const hasPassword = !!user.passwordHash
+    const hasGoogle = !!user.googleId
+    const hasGithub = !!user.githubId
+    const loginMethodCount = [hasPassword, hasGoogle, hasGithub].filter(Boolean).length
+
+    if (loginMethodCount <= 1) {
+      throw new ConflictError(
+        'Cannot disconnect your only login method. Set a password first, or connect another OAuth provider.'
+      )
+    }
+
+    const field = provider === 'google' ? 'googleId' : 'githubId'
+    const updated = await UserModel.findByIdAndUpdate(
+      userId,
+      { $unset: { [field]: 1 } },
+      { new: true }
+    )
+    if (!updated) throw new AppError('User not found', 404)
+    return updated
   }
 }
