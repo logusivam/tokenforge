@@ -44,8 +44,8 @@ export enum AuditEvent {
 
 // Rate limiter config
 export const RATE_LIMIT = {
-  LOGIN_MAX: 5,
-  LOGIN_WINDOW_MS: 15 * 60 * 1000, // 15 minutes
+  LOGIN_MAX: 50,
+  LOGIN_WINDOW_MS: 150 * 60 * 1000, // 15 minutes
   REGISTER_MAX: 3,
   REGISTER_WINDOW_MS: 60 * 60 * 1000, // 1 hour per IP
   API_GENERAL_MAX: 100,

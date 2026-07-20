@@ -20,7 +20,14 @@ export function errorHandler(err: Error, req: Request, res: Response, _next: Nex
       message: err.message,
       requestId,
     }
-    logger.warn('Operational error', { ...body, path: req.path, method: req.method })
+    if (err.message === 'Refresh token missing') {
+      logger.debug('Refresh check bypassed: no refresh token cookie present', {
+        path: req.path,
+        method: req.method,
+      })
+    } else {
+      logger.warn('Operational error', { ...body, path: req.path, method: req.method })
+    }
     res.status(err.statusCode).json(body)
     return
   }
