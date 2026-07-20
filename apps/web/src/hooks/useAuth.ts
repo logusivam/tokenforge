@@ -35,6 +35,8 @@ export function useAuth() {
       setAuth(user, accessToken)
     } catch (err) {
       clearAuth()
+    } finally {
+      setLoading(false)
     }
   }
 

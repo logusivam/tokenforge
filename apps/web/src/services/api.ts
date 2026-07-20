@@ -80,9 +80,13 @@ api.interceptors.response.use(
           error.response?.data?.message?.toLowerCase().includes('reuse') ||
           refreshError.response?.data?.message?.toLowerCase().includes('reuse')
 
+        const currentPath = window.location.pathname
+        const isAuthPage =
+          currentPath === '/login' || currentPath === '/register' || currentPath === '/'
+
         if (isReuse) {
           window.location.href = '/security-alert'
-        } else {
+        } else if (!isAuthPage) {
           window.location.href = '/login'
         }
         return Promise.reject(refreshError)
