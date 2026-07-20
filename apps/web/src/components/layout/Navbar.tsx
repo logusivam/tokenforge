@@ -12,8 +12,12 @@ export function Navbar() {
           {user?.role}
         </span>
       </div>
-      <div className="w-9 h-9 rounded-full bg-slate-800 flex items-center justify-center text-xs font-bold text-indigo-400 border border-slate-700">
-        {user?.name?.slice(0, 2) || 'US'}
+      <div className="w-9 h-9 rounded-full bg-indigo-600/20 border border-slate-700 flex items-center justify-center text-xs font-bold text-indigo-400 overflow-hidden">
+        {user?.avatar ? (
+          <img src={user.avatar} alt="Avatar" className="w-full h-full object-cover" />
+        ) : (
+          user?.name?.slice(0, 2).toUpperCase() || 'US'
+        )}
       </div>
     </div>
   )

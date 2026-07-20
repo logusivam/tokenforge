@@ -296,6 +296,17 @@ export function ProfilePage() {
             type="password"
             placeholder="••••••••"
           />
+          {toastMsg && (
+            <div
+              className={`text-xs px-3 py-2 rounded border mt-2 ${
+                toastType === 'success'
+                  ? 'bg-emerald-500/10 border-emerald-500/25 text-emerald-400'
+                  : 'bg-rose-500/10 border-rose-500/25 text-rose-400'
+              }`}
+            >
+              {toastMsg}
+            </div>
+          )}
           <div className="flex justify-end mt-2">
             <Button type="submit" isLoading={loading}>
               Update Password

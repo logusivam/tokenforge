@@ -46,29 +46,13 @@ export class OAuthController {
         throw new AppError('Query parameters code and state are required', 400)
       }
 
+      // Check that state exists inside redis cache to verify request validity
       const codeVerifier = await this.oauthService.getVerifierAndValidateState(state, true)
       if (!codeVerifier) {
         throw new AppError('PKCE verification code missing from state cache', 400)
       }
 
-      const {
-        user,
-        accessToken: _accessToken,
-        refreshToken,
-      } = await this.oauthService.handleGoogleCallback(code, codeVerifier)
-
-      res.cookie('refreshToken', refreshToken, COOKIE_OPTIONS)
-
-      await this.auditService.log({
-        userId: user._id.toString(),
-        event: AuditEvent.OAUTH_LOGIN,
-        ip: req.ip || 'unknown',
-        userAgent: req.headers['user-agent'] || 'unknown',
-        requestId: req.headers['x-request-id'] as string,
-        metadata: { provider: 'google' },
-      })
-
-      // Redirect to frontend callback route with code and state parameters
+      // Redirect to frontend callback route with code and state parameters to run exchange
       const frontendRedirectUrl = `${env.CLIENT_URL}/oauth/callback/google?code=${code}&state=${state}`
       res.redirect(frontendRedirectUrl)
     } catch (err) {
@@ -83,24 +67,8 @@ export class OAuthController {
         throw new AppError('Query parameters code and state are required', 400)
       }
 
+      // Verify that state exists in redis cache
       await this.oauthService.getVerifierAndValidateState(state, true)
-
-      const {
-        user,
-        accessToken: _accessToken,
-        refreshToken,
-      } = await this.oauthService.handleGitHubCallback(code)
-
-      res.cookie('refreshToken', refreshToken, COOKIE_OPTIONS)
-
-      await this.auditService.log({
-        userId: user._id.toString(),
-        event: AuditEvent.OAUTH_LOGIN,
-        ip: req.ip || 'unknown',
-        userAgent: req.headers['user-agent'] || 'unknown',
-        requestId: req.headers['x-request-id'] as string,
-        metadata: { provider: 'github' },
-      })
 
       // Redirect to frontend callback route with code and state parameters
       const frontendRedirectUrl = `${env.CLIENT_URL}/oauth/callback/github?code=${code}&state=${state}`
