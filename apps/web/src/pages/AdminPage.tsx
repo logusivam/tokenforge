@@ -4,30 +4,42 @@ import { ActiveSessionsTable } from '../components/admin/ActiveSessionsTable'
 import { AuditLogTable } from '../components/admin/AuditLogTable'
 import { RoleManager } from '../components/admin/RoleManager'
 import { usePermission } from '../hooks/usePermission'
+import { useAuthStore } from '../store/authStore'
 
 export function AdminPage() {
   const { hasPermission } = usePermission()
-  const [activeTab, setActiveTab] = useState<'overview' | 'users' | 'roles' | 'audit' | 'sessions'>(
-    'overview'
-  )
+  const { user } = useAuthStore()
+
+  const isModerator = user?.role === 'moderator'
+  const isOnlyModerator = isModerator && !user?.roles?.includes('admin')
 
   const menuItems = [
-    { id: 'overview', label: 'Dashboard Overview', visible: true },
+    { id: 'overview', label: 'Dashboard Overview', visible: !isOnlyModerator },
     { id: 'users', label: 'Users Manager', visible: hasPermission('users:read') },
     { id: 'roles', label: 'Roles & Permissions', visible: hasPermission('roles:read') },
     { id: 'audit', label: 'Audit Logs', visible: hasPermission('audit:read') },
-    { id: 'sessions', label: 'Active Sessions', visible: hasPermission('roles:read') }, // Gated to roles:read or equivalent admin-only permission
+    { id: 'sessions', label: 'Active Sessions', visible: hasPermission('roles:read') },
   ] as const
 
   const visibleMenuItems = menuItems.filter((item) => item.visible)
+  const defaultTab = visibleMenuItems[0]?.id || 'overview'
+
+  const [activeTab, setActiveTab] = useState<'overview' | 'users' | 'roles' | 'audit' | 'sessions'>(
+    defaultTab
+  )
+
+  const panelTitle = isOnlyModerator ? 'Moderator Panel' : 'Admin Panel'
+  const panelDescription = isOnlyModerator
+    ? 'Inspect system users and review security audit logs.'
+    : 'Mutate user roles, inspect audit logs, and revoke system-wide Redis session keys.'
 
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-1">
-        <h1 className="text-2xl font-black text-slate-100 uppercase tracking-wider">Admin Panel</h1>
-        <p className="text-sm text-slate-400">
-          Mutate user roles, inspect audit logs, and revoke system-wide Redis session keys.
-        </p>
+        <h1 className="text-2xl font-black text-slate-100 uppercase tracking-wider">
+          {panelTitle}
+        </h1>
+        <p className="text-sm text-slate-400">{panelDescription}</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
@@ -48,7 +60,7 @@ export function AdminPage() {
 
         {/* Tab content wrapper */}
         <div className="lg:col-span-3 flex flex-col gap-6">
-          {activeTab === 'overview' && (
+          {activeTab === 'overview' && !isOnlyModerator && (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="md:col-span-1">
                 <ActiveSessionsTable />
