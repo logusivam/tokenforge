@@ -234,10 +234,10 @@ export function LandingPage() {
 
         {/* 5-step implementation strip */}
         <div className="bg-[#12121A] border border-[#2A2A3D] rounded-xl p-6">
-          <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider block mb-4">
+          <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider block mb-4 text-center md:text-left">
             How it works in 5 steps:
           </span>
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4 md:divide-x md:divide-[#2A2A3D]">
+          <div className="flex flex-col md:flex-row gap-6 md:gap-4 justify-between items-stretch">
             {[
               { num: '1', title: 'Register', desc: 'hash pwd (bcrypt 12)' },
               { num: '2', title: 'Login', desc: 'RS256 JWT signed' },
@@ -245,10 +245,22 @@ export function LandingPage() {
               { num: '4', title: 'Refresh', desc: 'rotates silently, 7d' },
               { num: '5', title: 'RBAC', desc: 'enforced per route' },
             ].map((s, idx) => (
-              <div key={idx} className="flex flex-col gap-1 px-4 first:pl-0">
-                <span className="text-xs font-bold text-indigo-400">Step {s.num}</span>
-                <span className="text-sm font-semibold text-slate-200">{s.title}</span>
-                <span className="text-xs text-slate-500">{s.desc}</span>
+              <div
+                key={idx}
+                className="flex-1 flex flex-row md:flex-col items-center md:items-start gap-4 md:gap-1 pl-0 md:pl-4 first:pl-0 border-l-2 md:border-l-0 md:border-t-0 border-indigo-500/30 md:first:border-l-0"
+              >
+                {/* Visual Step Indicator badge for mobile vertical layout */}
+                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 text-xs font-bold md:hidden flex-shrink-0">
+                  {s.num}
+                </div>
+
+                <div className="flex flex-col gap-0.5">
+                  <span className="text-xs font-bold text-indigo-400 hidden md:inline">
+                    Step {s.num}
+                  </span>
+                  <span className="text-sm font-semibold text-slate-200">{s.title}</span>
+                  <span className="text-xs text-slate-500">{s.desc}</span>
+                </div>
               </div>
             ))}
           </div>
