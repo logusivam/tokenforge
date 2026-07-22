@@ -25,11 +25,9 @@ export function ProtectedLayout() {
               />
             </svg>
           </button>
-          <Link to="/dashboard" className="flex items-center gap-2">
-            <span className="w-8 h-8 rounded bg-indigo-600 flex items-center justify-center font-bold text-white shadow-[0_0_15px_rgba(99,102,241,0.5)]">
-              TF
-            </span>
-            <span className="font-bold text-slate-100 tracking-wider">TOKENFORGE</span>
+          <Link to="/dashboard" className="flex items-center">
+            {/* Logo Image */}
+            <img src="/navbar-logo-full@2x.svg" alt="TokenForge Logo" className="h-8 w-auto" />
           </Link>
         </div>
         <Navbar />

@@ -83,13 +83,8 @@ export function LandingPage() {
       {/* Sticky Header */}
       <header className="sticky top-0 z-50 h-16 border-b border-[#2A2A3D] bg-[#0A0A0F]/80 backdrop-blur-md px-6 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          {/* Logo Icon */}
-          <div className="relative w-8 h-8 flex items-center justify-center">
-            <span className="w-8 h-8 rounded bg-indigo-600 flex items-center justify-center font-bold text-white shadow-[0_0_15px_rgba(99,102,241,0.5)] text-sm">
-              TF
-            </span>
-          </div>
-          <span className="font-bold tracking-wider text-sm">TOKENFORGE</span>
+          {/* Logo Image */}
+          <img src="/navbar-logo-full@2x.svg" alt="TokenForge Logo" className="h-8 w-auto" />
         </div>
 
         <div className="flex gap-3">
@@ -297,11 +292,10 @@ export function LandingPage() {
         <div className="max-w-6xl mx-auto flex flex-col items-center gap-6">
           {/* Main Footer Row */}
           <div className="w-full flex flex-col md:flex-row items-center justify-between gap-6">
-            <div className="flex flex-col gap-1 text-center md:text-left">
-              <div className="flex items-center justify-center md:justify-start gap-2">
-                <span className="text-xs font-semibold text-[#F1F5F9] uppercase tracking-widest">
-                  TokenForge
-                </span>
+            <div className="flex flex-col gap-2 text-center md:text-left">
+              <div className="flex items-center justify-center md:justify-start">
+                {/* Footer Logo Image */}
+                <img src="/footer.svg" alt="TokenForge Logo" className="h-10 w-auto" />
               </div>
               <p className="text-[13px] text-[#94A3B8]">Built by Loganathan G P</p>
               <p className="text-[12px] text-[#475569]">Logusivam Vision</p>
