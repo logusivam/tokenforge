@@ -118,13 +118,13 @@ export function LandingPage() {
         </div>
 
         <h1 className="text-4xl md:text-6xl font-black tracking-tight leading-tight max-w-3xl">
-          Forge Your Auth. <br />
-          <span className="text-[#06B6D4]">Own Every Token.</span>
+          Build Auth From Scratch. <br />
+          <span className="text-[#06B6D4]">JWT Refresh Token Rotation.</span>
         </h1>
 
         <p className="text-base md:text-lg text-slate-400 max-w-2xl leading-relaxed">
-          JWT + Refresh Token Rotation + OAuth2 Google/GitHub + RBAC — forged from scratch. Zero
-          Auth0. Zero Clerk. Zero trust in black boxes.
+          Custom authentication without Auth0. An open-source, developer-first boilerplate with
+          RS256 asymmetric signing, OAuth2 Google/GitHub, and custom RBAC — forged from scratch.
         </p>
 
         <div className="flex gap-4 mt-2">
