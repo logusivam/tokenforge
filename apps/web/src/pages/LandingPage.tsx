@@ -87,22 +87,22 @@ export function LandingPage() {
           <img src="/navbar-logo-full@2x.svg" alt="TokenForge Logo" className="h-8 w-auto" />
         </div>
 
-        <div className="flex gap-3">
+        <div className="flex gap-2 sm:gap-3 flex-nowrap flex-shrink-0">
           {isAuthenticated ? (
-            <Link to="/dashboard">
-              <Button variant="primary" className="text-xs">
+            <Link to="/dashboard" className="flex-shrink-0">
+              <Button variant="primary" className="text-xs whitespace-nowrap">
                 Go to Dashboard
               </Button>
             </Link>
           ) : (
             <>
-              <Link to="/login">
-                <Button variant="ghost" className="text-xs">
+              <Link to="/login" className="flex-shrink-0">
+                <Button variant="ghost" className="text-xs whitespace-nowrap px-2.5 sm:px-4">
                   Sign In
                 </Button>
               </Link>
-              <Link to="/register">
-                <Button variant="primary" className="text-xs">
+              <Link to="/register" className="flex-shrink-0">
+                <Button variant="primary" className="text-xs whitespace-nowrap px-2.5 sm:px-4">
                   Get Started
                 </Button>
               </Link>
