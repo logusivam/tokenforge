@@ -31,3 +31,29 @@
     transform: translateY(0) scale(1);
   }
 }
+
+/* Custom Webkit scrollbar for premium dark theme integration */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0A0A0F;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 4px;
+  border: 1px solid #0A0A0F;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #334155;
+}
+
+/* Firefox standard scrollbars support */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #1e293b #0A0A0F;
+}

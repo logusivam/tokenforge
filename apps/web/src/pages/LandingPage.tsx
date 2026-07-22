@@ -499,24 +499,50 @@ export function LandingPage() {
               <span className="text-[10px] text-slate-500 ml-2 font-mono">token.service.ts</span>
             </div>
             <pre className="text-slate-400">
-              <span className="text-purple-400">async</span>{' '}
+              {'async '}
               <span className="text-blue-400">generateTokenPair</span>
-              {'('}
-              payload: <span className="text-[#06B6D4] font-semibold">JwtPayload</span>
+              {'(payload: '}
+              <span className="text-[#06B6D4] font-semibold">JwtPayload</span>
               {'): '}
-              <span className="text-[#06B6D4] font-semibold">Promise</span>&lt;{'{'}
-              accessToken: <span className="text-amber-400">string</span>; refreshToken:{' '}
-              <span className="text-amber-400">string</span>;{'}'}&gt; {'{'}
-              <span className="text-purple-400">const</span> jti ={' '}
-              <span className="text-blue-400">uuid</span>();
-              <span className="text-purple-400">const</span> accessToken ={' '}
-              <span className="text-blue-400">jwt.sign</span>( payload, privateKey,
-              {'{'} algorithm: <span className="text-[#10B981]">'RS256'</span>, jti {'}'}
-              );
-              <span className="text-purple-400">const</span> refreshToken ={' '}
-              <span className="text-purple-400">this</span>.
-              <span className="text-blue-400">saveToRedis</span>( payload.userId, jti );
-              <span className="text-purple-400">return</span> {'{'} accessToken, refreshToken {'}'};
+              <span className="text-[#06B6D4] font-semibold">Promise</span>
+              {'<{'}
+              {'\n  '}
+              {'accessToken: '}
+              <span className="text-amber-400">string</span>
+              {';'}
+              {'\n  '}
+              {'refreshToken: '}
+              <span className="text-amber-400">string</span>
+              {';'}
+              {'\n'}
+              {'}> {'}
+              {'\n  '}
+              <span className="text-purple-400">const</span>
+              {' jti = '}
+              <span className="text-blue-400">uuid</span>
+              {'();'}
+              {'\n  '}
+              <span className="text-purple-400">const</span>
+              {' accessToken = '}
+              <span className="text-blue-400">jwt.sign</span>
+              {'(payload, privateKey, {'}
+              {'\n    '}
+              {'algorithm: '}
+              <span className="text-[#10B981]">'RS256'</span>
+              {', jti,'}
+              {'\n  '}
+              {'});'}
+              {'\n  '}
+              <span className="text-purple-400">const</span>
+              {' refreshToken = '}
+              <span className="text-purple-400">this</span>
+              {'.'}
+              <span className="text-blue-400">saveToRedis</span>
+              {'(payload.userId, jti);'}
+              {'\n  '}
+              <span className="text-purple-400">return</span>
+              {' { accessToken, refreshToken };'}
+              {'\n'}
               {'}'}
             </pre>
           </div>
