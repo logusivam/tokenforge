@@ -234,10 +234,13 @@ export function LandingPage() {
 
         {/* 5-step implementation strip */}
         <div className="bg-[#12121A] border border-[#2A2A3D] rounded-xl p-6">
-          <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider block mb-4 text-center md:text-left">
+          <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider block mb-6 text-center md:text-left">
             How it works in 5 steps:
           </span>
-          <div className="flex flex-col md:flex-row gap-6 md:gap-4 justify-between items-stretch">
+          <div className="relative flex flex-col md:flex-row gap-6 md:gap-4 justify-between items-stretch">
+            {/* Dotted connector line visible only on mobile */}
+            <div className="absolute left-4 top-4 bottom-4 w-0.5 border-l-2 border-dashed border-indigo-500/20 md:hidden pointer-events-none" />
+
             {[
               { num: '1', title: 'Register', desc: 'hash pwd (bcrypt 12)' },
               { num: '2', title: 'Login', desc: 'RS256 JWT signed' },
@@ -247,10 +250,10 @@ export function LandingPage() {
             ].map((s, idx) => (
               <div
                 key={idx}
-                className="flex-1 flex flex-row md:flex-col items-center md:items-start gap-4 md:gap-1 pl-0 md:pl-4 first:pl-0 border-l-2 md:border-l-0 md:border-t-0 border-indigo-500/30 md:first:border-l-0"
+                className="relative flex-1 flex flex-row md:flex-col items-center md:items-start gap-4 md:gap-1 pl-0 md:pl-4 first:pl-0 md:first:border-l-0"
               >
-                {/* Visual Step Indicator badge for mobile vertical layout */}
-                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 text-xs font-bold md:hidden flex-shrink-0">
+                {/* Visual Step Indicator badge for mobile vertical layout (overlapping the dashed connector) */}
+                <div className="z-10 flex items-center justify-center w-8 h-8 rounded-full bg-[#12121A] border-2 border-indigo-500 text-indigo-400 text-xs font-bold md:hidden flex-shrink-0 shadow-[0_0_15px_rgba(99,102,241,0.25)]">
                   {s.num}
                 </div>
 
