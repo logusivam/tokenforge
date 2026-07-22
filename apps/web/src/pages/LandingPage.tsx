@@ -498,25 +498,26 @@ export function LandingPage() {
               <div className="w-3 h-3 rounded-full bg-emerald-500/50"></div>
               <span className="text-[10px] text-slate-500 ml-2 font-mono">token.service.ts</span>
             </div>
-            <pre className="text-slate-300">
-              {`async generateTokenPair(
-  payload: <span className="text-[#06B6D4]">JwtPayload</span>
-): Promise&lt;{
-  accessToken: <span className="text-[#06B6D4]">string</span>;
-  refreshToken: <span className="text-[#06B6D4]">string</span>;
-}&gt; {
-  <span className="text-[#06B6D4]">const</span> jti = uuid();
-  <span className="text-[#06B6D4]">const</span> accessToken = jwt.sign(
-    payload,
-    privateKey,
-    { algorithm: '<span className="text-[#10B981]">RS256</span>', jti }
-  );
-  <span className="text-[#06B6D4]">const</span> refreshToken = <span className="text-[#06B6D4]">this</span>.saveToRedis(
-    payload.userId,
-    jti
-  );
-  <span className="text-[#06B6D4]">return</span> { accessToken, refreshToken };
-}`}
+            <pre className="text-slate-400">
+              <span className="text-purple-400">async</span>{' '}
+              <span className="text-blue-400">generateTokenPair</span>
+              {'('}
+              payload: <span className="text-[#06B6D4] font-semibold">JwtPayload</span>
+              {'): '}
+              <span className="text-[#06B6D4] font-semibold">Promise</span>&lt;{'{'}
+              accessToken: <span className="text-amber-400">string</span>; refreshToken:{' '}
+              <span className="text-amber-400">string</span>;{'}'}&gt; {'{'}
+              <span className="text-purple-400">const</span> jti ={' '}
+              <span className="text-blue-400">uuid</span>();
+              <span className="text-purple-400">const</span> accessToken ={' '}
+              <span className="text-blue-400">jwt.sign</span>( payload, privateKey,
+              {'{'} algorithm: <span className="text-[#10B981]">'RS256'</span>, jti {'}'}
+              );
+              <span className="text-purple-400">const</span> refreshToken ={' '}
+              <span className="text-purple-400">this</span>.
+              <span className="text-blue-400">saveToRedis</span>( payload.userId, jti );
+              <span className="text-purple-400">return</span> {'{'} accessToken, refreshToken {'}'};
+              {'}'}
             </pre>
           </div>
         </div>
@@ -586,10 +587,10 @@ export function LandingPage() {
             Dive into the dashboard console to inspect decoded token claims, trigger rotation, or
             audit security events.
           </p>
-          <Link to="/dashboard">
+          <Link to={isAuthenticated ? '/dashboard' : '/login'}>
             <Button
               variant="secondary"
-              className="px-8 py-3 text-sm font-bold bg-white text-indigo-600 border-none hover:bg-indigo-50"
+              className="px-8 py-3 text-sm font-bold bg-[#F1F5F9] text-indigo-600 border border-slate-200 hover:bg-white hover:text-indigo-700 shadow-md transition-colors"
             >
               Explore the Dashboard
             </Button>
