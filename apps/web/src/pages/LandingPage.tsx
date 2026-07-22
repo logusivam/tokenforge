@@ -270,6 +270,333 @@ export function LandingPage() {
         </div>
       </section>
 
+      {/* 1. Features Grid Section */}
+      <section className="py-20 px-6 bg-[#0A0A0F] max-w-6xl mx-auto w-full border-t border-[#2A2A3D]/40">
+        <div className="text-center md:text-left mb-12 flex flex-col gap-2">
+          <span className="text-xs font-bold tracking-widest text-[#94A3B8] uppercase">
+            Features
+          </span>
+          <h2 className="text-3xl md:text-4xl font-black text-[#F1F5F9] tracking-tight">
+            Every security primitive. From first principles.
+          </h2>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {[
+            {
+              title: 'JWT Token Engine',
+              desc: 'Signed with RS256 asymmetric keys. API holds the private key, client services verify with distributable public keys.',
+              icon: (
+                <svg
+                  className="w-5 h-5 stroke-indigo-400"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth="2"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M15.75 5.25a3 3 0 0 1 3 3m3 0a6 6 0 0 1-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1 1 21.75 8.25Z"
+                  />
+                </svg>
+              ),
+            },
+            {
+              title: 'Refresh Rotation',
+              desc: 'Issues fresh sliding-window rotation tokens on every refresh action. Auto-detects reuse events to drop session lineages.',
+              icon: (
+                <svg
+                  className="w-5 h-5 stroke-indigo-400"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth="2"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"
+                  />
+                </svg>
+              ),
+            },
+            {
+              title: 'OAuth2 PKCE',
+              desc: 'Google & GitHub integrations with code challenges, state parameter verification, and CSRF lock validation.',
+              icon: (
+                <svg
+                  className="w-5 h-5 stroke-indigo-400"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth="2"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751A11.956 11.956 0 0 1 12 2.714Z"
+                  />
+                </svg>
+              ),
+            },
+            {
+              title: 'RBAC Engine',
+              desc: 'Role mappings with resource-scoped grants. Decoded claims are parsed directly without per-request DB queries.',
+              icon: (
+                <svg
+                  className="w-5 h-5 stroke-indigo-400"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth="2"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.109A12.018 12.018 0 0 1 12 21c-1.07 0-2.097-.14-3.07-.403v-.109c0-1.112.284-2.16.786-3.07M11.25 18a4.5 4.5 0 0 0-8.25-2.285 4.5 4.5 0 0 0 6.643 4.27M12 15.75A4.5 4.5 0 0 0 16.5 12 4.5 4.5 0 0 0 12 7.5 4.5 4.5 0 0 0 7.5 12 4.5 4.5 0 0 0 12 15.75Z"
+                  />
+                </svg>
+              ),
+            },
+            {
+              title: 'Rate Limiting',
+              desc: 'Protects sensitive paths via Redis rate limit store, persisting client IP request thresholds across container upgrades.',
+              icon: (
+                <svg
+                  className="w-5 h-5 stroke-indigo-400"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth="2"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                  />
+                </svg>
+              ),
+            },
+            {
+              title: 'Audit Logging',
+              desc: 'Documents authentication anomalies and events. Automatically purges old logs using Mongoose TTL indices.',
+              icon: (
+                <svg
+                  className="w-5 h-5 stroke-indigo-400"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth="2"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"
+                  />
+                </svg>
+              ),
+            },
+          ].map((item, idx) => (
+            <div
+              key={idx}
+              className="bg-[#12121A] border border-[#2A2A3D] rounded-xl p-6 flex flex-col gap-4"
+            >
+              <div className="w-10 h-10 rounded-full bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center flex-shrink-0">
+                {item.icon}
+              </div>
+              <h3 className="text-lg font-bold text-[#F1F5F9]">{item.title}</h3>
+              <p className="text-sm text-[#94A3B8] leading-relaxed flex-grow">{item.desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* 2. OAuth Showcase Section */}
+      <section className="bg-[#12121A] border-y border-[#2A2A3D] py-16 px-6 w-full">
+        <div className="max-w-6xl mx-auto flex flex-col gap-10">
+          <div className="text-center md:text-left flex flex-col gap-2">
+            <span className="text-xs font-bold tracking-widest text-[#94A3B8] uppercase">
+              Social Auth
+            </span>
+            <h2 className="text-3xl font-black text-[#F1F5F9] tracking-tight">
+              Login with any provider. Data stays yours.
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {[
+              {
+                provider: 'Google OAuth Flow',
+                steps: [
+                  'Redirect client securely to accounts.google.com with code challenge.',
+                  'User authenticates & consents to profile/identity share scopes.',
+                  'Callback handles verifier check to swap OAuth code for Google user details.',
+                  'Database resolves identity records, issuing secure httpOnly session cookies.',
+                ],
+              },
+              {
+                provider: 'GitHub OAuth Flow',
+                steps: [
+                  'Redirect client to github.com/login/oauth/authorize verification endpoint.',
+                  'User authorizes request and consent parameters on login.',
+                  'Exchange authorization code securely for GitHub access credentials.',
+                  'Compute matching user schemas, returning JWT payload directly to storage.',
+                ],
+              },
+            ].map((p, idx) => (
+              <div
+                key={idx}
+                className="bg-[#0A0A0F] border border-[#2A2A3D] rounded-xl p-6 flex flex-col gap-4"
+              >
+                <h3 className="text-base font-bold text-indigo-400">{p.provider}</h3>
+                <div className="flex flex-col gap-3">
+                  {p.steps.map((step, sIdx) => (
+                    <div key={sIdx} className="flex gap-3 items-start">
+                      <div className="w-5 h-5 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 flex items-center justify-center text-[10px] font-bold mt-0.5 flex-shrink-0">
+                        {sIdx + 1}
+                      </div>
+                      <p className="text-xs text-[#94A3B8] leading-relaxed">{step}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 3. Security Section with Code Snippet */}
+      <section className="py-20 px-6 max-w-6xl mx-auto w-full">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
+          <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-2">
+              <span className="text-xs font-bold tracking-widest text-[#94A3B8] uppercase">
+                Architecture Primitives
+              </span>
+              <h2 className="text-3xl font-black text-[#F1F5F9] tracking-tight">
+                Cryptographic primitives, implemented correctly.
+              </h2>
+            </div>
+
+            <div className="flex flex-col gap-3">
+              {[
+                'Asymmetric signature verification (RS256 algorithm)',
+                'Transparent silent refresh mechanism (Axios Interceptors)',
+                'Strict cookie settings (SameSite=Strict, Secure, HttpOnly)',
+                'Full token reuse family tracking (compromise auto-invalidation)',
+                'Persistent Redis-backed rate limiting thresholds',
+                'MongoDB auto-expiring audit logs (TTL Indexes)',
+              ].map((spec, idx) => (
+                <div key={idx} className="flex gap-2 items-center text-sm text-[#94A3B8]">
+                  <span className="text-[#10B981] font-bold">✓</span>
+                  <span>{spec}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Monospace Code snippet card */}
+          <div className="bg-[#12121A] border border-[#2A2A3D] rounded-xl p-5 font-mono text-[13px] leading-relaxed shadow-2xl overflow-x-auto">
+            <div className="flex items-center gap-1.5 border-b border-[#2A2A3D] pb-3 mb-4">
+              <div className="w-3 h-3 rounded-full bg-rose-500/50"></div>
+              <div className="w-3 h-3 rounded-full bg-amber-500/50"></div>
+              <div className="w-3 h-3 rounded-full bg-emerald-500/50"></div>
+              <span className="text-[10px] text-slate-500 ml-2 font-mono">token.service.ts</span>
+            </div>
+            <pre className="text-slate-300">
+              {`async generateTokenPair(
+  payload: <span className="text-[#06B6D4]">JwtPayload</span>
+): Promise&lt;{
+  accessToken: <span className="text-[#06B6D4]">string</span>;
+  refreshToken: <span className="text-[#06B6D4]">string</span>;
+}&gt; {
+  <span className="text-[#06B6D4]">const</span> jti = uuid();
+  <span className="text-[#06B6D4]">const</span> accessToken = jwt.sign(
+    payload,
+    privateKey,
+    { algorithm: '<span className="text-[#10B981]">RS256</span>', jti }
+  );
+  <span className="text-[#06B6D4]">const</span> refreshToken = <span className="text-[#06B6D4]">this</span>.saveToRedis(
+    payload.userId,
+    jti
+  );
+  <span className="text-[#06B6D4]">return</span> { accessToken, refreshToken };
+}`}
+            </pre>
+          </div>
+        </div>
+      </section>
+
+      {/* 4. Architecture Preview Section */}
+      <section className="bg-[#12121A] border-t border-[#2A2A3D] py-20 px-6 w-full">
+        <div className="max-w-6xl mx-auto flex flex-col gap-12">
+          <div className="text-center flex flex-col gap-2">
+            <span className="text-xs font-bold tracking-widest text-[#94A3B8] uppercase">
+              System Topology
+            </span>
+            <h2 className="text-3xl font-black text-[#F1F5F9] tracking-tight">
+              Modular Monorepo Topology
+            </h2>
+            <p className="text-sm text-[#94A3B8] max-w-xl mx-auto">
+              Stateless API tier scaling alongside memory-mapped cache boundaries.
+            </p>
+          </div>
+
+          {/* Simple Visual Architecture Diagram */}
+          <div className="bg-[#0A0A0F] border border-[#2A2A3D] rounded-xl p-8 flex flex-col md:flex-row items-center justify-around gap-8 relative overflow-hidden">
+            <div className="z-10 flex flex-col items-center gap-2 p-4 bg-[#12121A] border border-[#2A2A3D] rounded-xl w-40 text-center shadow-lg">
+              <span className="text-2xl">📱</span>
+              <span className="text-xs font-bold text-indigo-400">Web App Client</span>
+              <span className="text-[10px] text-slate-500 font-mono">React / Zustand</span>
+            </div>
+
+            <div className="text-indigo-500 text-xl font-bold animate-pulse rotate-90 md:rotate-0">
+              ⇆
+            </div>
+
+            <div className="z-10 flex flex-col items-center gap-2 p-4 bg-[#12121A] border border-indigo-500/50 rounded-xl w-40 text-center shadow-lg shadow-indigo-500/5">
+              <span className="text-2xl">⚙️</span>
+              <span className="text-xs font-bold text-[#F1F5F9]">Stateless API</span>
+              <span className="text-[10px] text-slate-500 font-mono">Node / Express</span>
+            </div>
+
+            <div className="text-indigo-500 text-xl font-bold animate-pulse rotate-90 md:rotate-0">
+              ⇆
+            </div>
+
+            <div className="flex flex-col gap-3">
+              <div className="z-10 flex flex-col items-center gap-2 p-3 bg-[#12121A] border border-[#2A2A3D] rounded-xl w-40 text-center shadow-lg">
+                <span className="text-xl">🗄️</span>
+                <span className="text-xs font-bold text-emerald-400">Database tier</span>
+                <span className="text-[10px] text-slate-500 font-mono">MongoDB Atlas</span>
+              </div>
+              <div className="z-10 flex flex-col items-center gap-2 p-3 bg-[#12121A] border border-[#2A2A3D] rounded-xl w-40 text-center shadow-lg">
+                <span className="text-xl">⚡</span>
+                <span className="text-xs font-bold text-amber-400">Cache / Session</span>
+                <span className="text-[10px] text-slate-500 font-mono">Redis cache</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 5. CTA Footer Strip */}
+      <section className="bg-indigo-600 py-16 px-6 w-full text-center relative overflow-hidden">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-white/5 rounded-full blur-3xl pointer-events-none" />
+        <div className="relative z-10 max-w-2xl mx-auto flex flex-col items-center gap-6">
+          <h2 className="text-3xl font-extrabold text-white">
+            Ready to see how auth really works?
+          </h2>
+          <p className="text-sm text-indigo-100 leading-relaxed max-w-lg">
+            Dive into the dashboard console to inspect decoded token claims, trigger rotation, or
+            audit security events.
+          </p>
+          <Link to="/dashboard">
+            <Button
+              variant="secondary"
+              className="px-8 py-3 text-sm font-bold bg-white text-indigo-600 border-none hover:bg-indigo-50"
+            >
+              Explore the Dashboard
+            </Button>
+          </Link>
+        </div>
+      </section>
+
       {/* FAQ Section */}
       <section className="py-16 px-6 bg-[#0A0A0F] max-w-4xl mx-auto w-full border-t border-[#2A2A3D]">
         <h2 className="text-3xl font-black text-center mb-10 text-slate-100">
