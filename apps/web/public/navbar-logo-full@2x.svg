@@ -47,7 +47,7 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
      inkscape:zoom="1.6269531"
-     inkscape:cx="161.95919"
+     inkscape:cx="162.57383"
      inkscape:cy="11.985594"
      inkscape:window-width="1920"
      inkscape:window-height="1051"
@@ -68,12 +68,12 @@
   <text
      xml:space="preserve"
      style="font-weight:500;font-size:36.9107px;line-height:0;font-family:'IBM Plex Sans';-inkscape-font-specification:'IBM Plex Sans, Medium';text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#eb6f36;fill-opacity:1;stroke:none;stroke-width:2;stroke-linejoin:round;stroke-miterlimit:14.6;stroke-dasharray:none;stroke-opacity:1;paint-order:markers fill stroke"
-     x="109.95549"
+     x="117.15582"
      y="76.788361"
      id="text24"><tspan
        sodipodi:role="line"
        id="tspan24"
-       x="109.95549"
+       x="117.15582"
        y="76.788361"
        style="line-height:0;stroke-width:2"><tspan
          style="font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;font-size:65.1185px;line-height:0;font-family:'Inter 28pt';-inkscape-font-specification:'Inter 28pt, Medium';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#94a3b8;fill-opacity:1;stroke:none;stroke-width:2"
@@ -82,7 +82,7 @@
          id="tspan2">Forge</tspan></tspan></text>
   <g
      id="g2"
-     transform="matrix(0.11159135,0,0,0.11159135,5.591797,2.6375438)">
+     transform="matrix(0.11159135,0,0,0.11159135,-0.408203,2.6375438)">
     <path
        sodipodi:type="star"
        style="fill:#6366f1;fill-opacity:0.0784314;stroke:#6366f1;stroke-width:19.4775;stroke-linejoin:round;stroke-miterlimit:14.6;stroke-dasharray:none;stroke-opacity:1;paint-order:markers fill stroke"
