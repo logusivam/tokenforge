@@ -1,4 +1,5 @@
 import { Router } from 'express'
+import rateLimit from 'express-rate-limit'
 import { UserController } from './user.controller'
 import { UserService } from './user.service'
 import { userRepo, auditService } from '../auth/auth.routes'
@@ -8,6 +9,13 @@ import { validate } from '@/middleware/validate.middleware'
 import Joi from 'joi'
 
 export const usersRouter = Router()
+
+const usersRateLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  standardHeaders: true,
+  legacyHeaders: false,
+})
 
 const userService = new UserService(userRepo)
 const userController = new UserController(userService, auditService)
@@ -31,6 +39,7 @@ const updateMeSchema = Joi.object({
   oldPassword: Joi.string().optional(),
 })
 
+usersRouter.use(usersRateLimiter)
 usersRouter.use(requireAuth)
 
 usersRouter.get('/me', requirePermission('profile:read:own'), userController.getMe)

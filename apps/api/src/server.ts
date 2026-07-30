@@ -20,7 +20,7 @@ import { connectRedis } from '@/config/redis'
 import { logger } from '@/shared/logger'
 import { errorHandler } from '@/middleware/errorHandler.middleware'
 import { requestIdMiddleware } from '@/middleware/requestId.middleware'
-import { loginRateLimiter } from '@/middleware/rateLimiter.middleware'
+import { apiRateLimiter, loginRateLimiter } from '@/middleware/rateLimiter.middleware'
 import { sanitize } from '@/middleware/sanitize.middleware'
 
 import { authRouter } from '@/modules/auth/auth.routes'
@@ -95,8 +95,8 @@ app.use(
 // ── Input sanitization ───────────────────────────────────────────────
 app.use(sanitize) // mongo-sanitize: strip $ operators
 
-// ── Health check (no auth, no rate limit) ───────────────────────────
-app.get('/api/v1/health', async (_req, res) => {
+// ── Health check (no auth, rate-limited) ────────────────────────────
+app.get('/api/v1/health', apiRateLimiter, async (_req, res) => {
   const mongoOk = mongoose.connection.readyState === 1
   const redis = app.get('redis') as Redis
   let redisOk = false

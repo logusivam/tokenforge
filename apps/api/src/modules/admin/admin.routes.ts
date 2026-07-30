@@ -1,4 +1,5 @@
 import { Router } from 'express'
+import rateLimit from 'express-rate-limit'
 import { AdminController } from './admin.controller'
 import { AdminService } from './admin.service'
 import { redis } from '@/config/redis'
@@ -10,7 +11,14 @@ export const adminRouter = Router()
 
 const adminService = new AdminService(userRepo, redis)
 const adminController = new AdminController(adminService, auditService)
+const adminRateLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  standardHeaders: true,
+  legacyHeaders: false,
+})
 
+adminRouter.use(adminRateLimiter)
 adminRouter.use(requireAuth)
 
 adminRouter.get(

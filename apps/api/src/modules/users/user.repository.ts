@@ -10,11 +10,11 @@ export class UserRepository {
   }
 
   async findByEmail(email: string): Promise<IUser | null> {
-    return UserModel.findOne({ email })
+    return UserModel.findOne({ email: { $eq: email } })
   }
 
   async findByEmailWithPassword(email: string): Promise<IUser | null> {
-    return UserModel.findOne({ email }).select('+passwordHash')
+    return UserModel.findOne({ email: { $eq: email } }).select('+passwordHash')
   }
 
   async create(user: Partial<IUser>): Promise<IUser> {
