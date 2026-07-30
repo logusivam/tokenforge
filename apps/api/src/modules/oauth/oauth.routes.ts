@@ -1,4 +1,5 @@
 import { Router } from 'express'
+import rateLimit from 'express-rate-limit'
 import { OAuthController } from './oauth.controller'
 import { OAuthService } from './oauth.service'
 import { GoogleProvider } from './providers/google.provider'
@@ -7,6 +8,13 @@ import { redis } from '@/config/redis'
 import { tokenService, userRepo, rbacService, auditService } from '../auth/auth.routes'
 
 export const oauthRouter = Router()
+
+const oauthExchangeLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+})
 
 const googleProvider = new GoogleProvider()
 const githubProvider = new GitHubProvider()
@@ -22,7 +30,7 @@ const oauthController = new OAuthController(oauthService, auditService, tokenSer
 
 oauthRouter.get('/google', oauthController.googleInit)
 oauthRouter.get('/google/callback', oauthController.googleCallback)
-oauthRouter.post('/google/callback', oauthController.googleExchange)
+oauthRouter.post('/google/callback', oauthExchangeLimiter, oauthController.googleExchange)
 oauthRouter.get('/github', oauthController.githubInit)
 oauthRouter.get('/github/callback', oauthController.githubCallback)
-oauthRouter.post('/github/callback', oauthController.githubExchange)
+oauthRouter.post('/github/callback', oauthExchangeLimiter, oauthController.githubExchange)
