@@ -3,9 +3,10 @@ import React from 'react'
 interface BadgeProps {
   children: React.ReactNode
   variant?: 'success' | 'warning' | 'info' | 'danger'
+  className?: string
 }
 
-export function Badge({ children, variant = 'info' }: BadgeProps) {
+export function Badge({ children, variant = 'info', className = '' }: BadgeProps) {
   const styles = {
     success: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/25',
     warning: 'bg-amber-500/10 text-amber-400 border-amber-500/25',
@@ -14,7 +15,9 @@ export function Badge({ children, variant = 'info' }: BadgeProps) {
   }
 
   return (
-    <span className={`px-2 py-0.5 rounded border text-xs font-semibold ${styles[variant]}`}>
+    <span
+      className={`px-2 py-0.5 rounded border text-xs font-semibold ${styles[variant]} ${className}`}
+    >
       {children}
     </span>
   )

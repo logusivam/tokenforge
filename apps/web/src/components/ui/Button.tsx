@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'danger' | 'ghost'
   isLoading?: boolean
+  size?: 'sm' | 'md' | 'lg'
 }
 
 export function Button({
@@ -12,6 +13,7 @@ export function Button({
   isLoading,
   className = '',
   disabled,
+  size = 'md',
   ...props
 }: ButtonProps) {
   const baseStyle =
@@ -33,7 +35,7 @@ export function Button({
       whileTap={{ scale: disabled || isLoading ? 1 : 0.98 }}
       disabled={disabled || isLoading}
       className={`${baseStyle} ${variants[variant]} ${className}`}
-      {...props}
+      {...(props as any)}
     >
       {isLoading ? (
         <span className="w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin"></span>

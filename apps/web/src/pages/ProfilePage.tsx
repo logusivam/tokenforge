@@ -52,15 +52,16 @@ export function ProfilePage() {
 
   return (
     <div className="flex flex-col gap-8 max-w-2xl mx-auto">
-      {toastMsg && (
+      {toastMsg ? (
         <Toast
           message={toastMsg}
           type={toastType}
+          isVisible={!!toastMsg}
           onClose={() => {
             setToastMsg('')
           }}
         />
-      )}
+      ) : null}
 
       <div className="flex flex-col gap-1 border-b border-slate-800 pb-4">
         <h1 className="text-2xl font-extrabold text-slate-100 uppercase tracking-wider">

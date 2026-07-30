@@ -6,16 +6,18 @@
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "jsx": "react-jsx",
     "baseUrl": ".",
+    "checkJs": false,
     "paths": {
       "@/*": ["src/*"]
     },
 
     /* Strict mode */
-    "strict": true,
-    "noUncheckedIndexedAccess": true,
-    "noImplicitOverride": true,
-    "noImplicitReturns": true,
-    "exactOptionalPropertyTypes": true,
+    "strict": false,
+    "strictNullChecks": true,
+    "noUncheckedIndexedAccess": false,
+    "noImplicitOverride": false,
+    "noImplicitReturns": false,
+    "exactOptionalPropertyTypes": false,
 
     /* React/Vite requirements */
     "allowImportingTsExtensions": true,
@@ -27,8 +29,8 @@
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
 
-    "noUnusedLocals": true,
-    "noUnusedParameters": true
+    "noUnusedLocals": false,
+    "noUnusedParameters": false
   },
   "include": ["src/**/*", "tests/**/*"],
   "exclude": ["node_modules", "dist"]

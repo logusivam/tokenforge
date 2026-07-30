@@ -16,6 +16,7 @@ export function Toast({ message, type = 'info', isVisible, onClose }: ToastProps
         clearTimeout(timer)
       }
     }
+    return undefined
   }, [isVisible, onClose])
 
   const styles = {

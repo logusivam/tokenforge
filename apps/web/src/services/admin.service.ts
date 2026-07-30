@@ -16,7 +16,12 @@ export const adminService = {
     await api.delete(`/admin/users/${userId}/sessions`)
   },
 
-  async getStats(): Promise<{ totalUsers: number; activeSessions: number }> {
+  async getStats(): Promise<{
+    totalUsers: number
+    activeSessions: number
+    oauthUsers: number
+    adminUsers: number
+  }> {
     const response = await api.get('/admin/stats')
     return response.data.data
   },
