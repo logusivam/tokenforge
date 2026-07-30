@@ -1,0 +1,47 @@
+name: Feature Request
+description: Propose a new feature, enhancement, or visual element for TokenForge
+title: '[FEATURE] '
+labels: ['enhancement', 'triage']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for suggesting a feature! Please provide details to help us evaluate the request.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem Statement
+      description: Is your feature request related to a problem or limitation?
+      placeholder: A clear and concise description of what the problem is. e.g., I'm frustrated when...
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution
+      description: Provide a clear description of what you want to happen.
+      placeholder: A clear and concise description of the feature or enhancement you want added.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: Describe any alternative solutions or workarounds you have considered.
+      placeholder: A description of alternative behaviors or API structures you've thought about.
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Affected Component Scopes
+      description: Select the parts of the codebase this change would affect.
+      options:
+        - label: '@tokenforge/api (Backend API endpoints, database schemas)'
+        - label: '@tokenforge/web (Frontend React UI components, states)'
+        - label: CI/CD Workflows / Docker configs
+        - label: Documentation

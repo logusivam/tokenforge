@@ -2,13 +2,13 @@ name: CI
 
 on:
   push:
-    branches: [main, develop]
+    branches: [main, dev]
   pull_request:
-    branches: [main, develop]
+    branches: [main, dev]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true            # Cancel stale runs on new pushes
+  cancel-in-progress: true # Cancel stale runs on new pushes
 
 jobs:
   lint:
@@ -43,14 +43,14 @@ jobs:
           --health-retries 5
     env:
       NODE_ENV: test
-      MONGO_URI: mongodb://localhost:27017/tokenforge_test
-      REDIS_URL: redis://localhost:6379
+      MONGO_URI: ${{ secrets.MONGO_URI_TEST }}
+      REDIS_URL: ${{ secrets.REDIS_URL_TEST }}
       JWT_PRIVATE_KEY: ${{ secrets.JWT_PRIVATE_KEY_TEST }}
       JWT_PUBLIC_KEY: ${{ secrets.JWT_PUBLIC_KEY_TEST }}
       JWT_ACCESS_EXPIRY: 15m
       JWT_REFRESH_EXPIRY: 7d
-      COOKIE_SECRET: test-cookie-secret-min-32-chars-xxxx
-      CLIENT_URL: http://localhost:5173
+      COOKIE_SECRET: ${{ secrets.COOKIE_SECRET_TEST }}
+      CLIENT_URL: https://tokenforge-dev.vercel.app
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -84,11 +84,9 @@ jobs:
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     steps:
       - uses: actions/checkout@v4
-      - name: Deploy API → Railway
-        uses: bervProject/railway-deploy@main
-        with:
-          railway_token: ${{ secrets.RAILWAY_TOKEN }}
-          service: api
+      - name: Deploy API → Render
+        run: |
+          curl -f -X POST "${{ secrets.RENDER_DEPLOY_HOOK_URL }}"
       - name: Deploy Web → Vercel
         uses: amondnet/vercel-action@v25
         with:
