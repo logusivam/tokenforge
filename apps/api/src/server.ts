@@ -1,5 +1,5 @@
 import path from 'path'
-import moduleAlias from 'module-alias'
+import * as moduleAlias from 'module-alias'
 
 // Register aliases programmatically to ensure robust path resolution in monorepos
 moduleAlias.addAlias('@', path.resolve(__dirname, '.'))
