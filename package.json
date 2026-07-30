@@ -34,7 +34,7 @@
     "format": "prettier --write \"**/*.{ts,tsx,js,mjs,json,md,yml}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,mjs,json,md,yml}\"",
     "clean": "turbo run clean && rimraf node_modules",
-    "prepare": "husky",
+    "prepare": "node -e \"if (process.env.NODE_ENV !== 'production') { require('child_process').execSync('husky', { stdio: 'inherit' }) }\"",
     "keys:generate": "bash scripts/generate-keys.sh",
     "db:seed": "npx tsx apps/api/scripts/seed-db.ts",
     "db:revoke-all": "npx tsx apps/api/scripts/revoke-all-sessions.ts",
