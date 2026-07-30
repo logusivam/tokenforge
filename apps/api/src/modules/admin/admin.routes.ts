@@ -18,8 +18,8 @@ const adminRateLimiter = rateLimit({
   legacyHeaders: false,
 })
 
-adminRouter.use(requireAuth)
 adminRouter.use(adminRateLimiter)
+adminRouter.use(requireAuth)
 
 adminRouter.get(
   '/users',
