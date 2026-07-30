@@ -29,6 +29,7 @@
     "morgan": "^1.11.0",
     "uuid": "^11.1.0",
     "winston": "^3.19.0",
+    "@tokenforge/types": "*",
     "@types/bcryptjs": "^2.4.6",
     "@types/cookie-parser": "^1.4.8",
     "@types/cors": "^2.8.17",
