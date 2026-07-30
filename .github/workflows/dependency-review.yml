@@ -14,3 +14,7 @@ jobs:
         with:
           fail-on-severity: high # Block high + critical CVEs
           deny-licenses: GPL-2.0, GPL-3.0 # Block copyleft licenses
+          # GHSA-qwww-vcr4-c8h2: react-router RSC Mode CSRF — only affects SSR/RSC apps.
+          # This project is a Vite client-side app (no SSR/RSC), so this CVE is not exploitable.
+          # react-router-dom has no v8.x release; no non-breaking fix exists in the 7.x line.
+          allow-ghsas: GHSA-qwww-vcr4-c8h2
