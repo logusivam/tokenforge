@@ -1,4 +1,9 @@
-import 'module-alias/register'
+import path from 'path'
+import moduleAlias from 'module-alias'
+
+// Register aliases programmatically to ensure robust path resolution in monorepos
+moduleAlias.addAlias('@', path.resolve(__dirname, '.'))
+
 import 'dotenv/config'
 import express from 'express'
 import helmet from 'helmet'

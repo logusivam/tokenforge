@@ -49,6 +49,6 @@
     "vitest": "^3.2.4"
   },
   "_moduleAliases": {
-    "@": "./dist"
+    "@": "dist"
   }
 }
