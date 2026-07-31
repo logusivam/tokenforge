@@ -1,0 +1,33 @@
+# Force LF line endings for all text files — prevents CRLF issues on Windows dev machines
+* text=auto eol=lf
+
+# Explicitly LF
+*.ts        text eol=lf
+*.tsx       text eol=lf
+*.js        text eol=lf
+*.mjs       text eol=lf
+*.json      text eol=lf
+*.md        text eol=lf
+*.yml       text eol=lf
+*.yaml      text eol=lf
+*.env*      text eol=lf
+*.sh        text eol=lf
+
+# Binary — never diff or merge
+*.png       binary
+*.jpg       binary
+*.ico       binary
+*.woff2     binary
+*.pdf       binary
+*.pem       binary
+
+# PEM key files — never show in diffs (sensitive)
+*.pem       diff=nodiff
+
+# Linguist — tell GitHub what this repo is
+*.ts        linguist-language=TypeScript
+*.tsx       linguist-language=TypeScript
+
+# Collapse generated/vendored files in GitHub diffs
+CHANGELOG.md        linguist-generated=true
+package-lock.json   linguist-generated=true

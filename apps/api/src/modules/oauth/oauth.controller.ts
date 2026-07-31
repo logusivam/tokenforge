@@ -1,0 +1,167 @@
+import { Request, Response, NextFunction } from 'express'
+import { OAuthService } from './oauth.service'
+import { TokenService } from '../token/token.service'
+import { success } from '@/shared/response'
+import { COOKIE_OPTIONS, AuditEvent } from '@/shared/constants'
+import { AuditService } from '../audit/audit.service'
+import { AppError } from '@/shared/errors'
+import { env } from '@/config/env'
+
+export class OAuthController {
+  constructor(
+    private readonly oauthService: OAuthService,
+    private readonly auditService: AuditService,
+    private readonly tokenService?: TokenService
+  ) {}
+
+  /** Safely extract userId from a Bearer token without throwing */
+  private extractUserIdFromAuthHeader(req: Request): string | undefined {
+    try {
+      const authHeader = req.headers.authorization
+      if (!authHeader || !authHeader.startsWith('Bearer ')) return undefined
+      const token = authHeader.slice(7)
+      const payload = this.tokenService?.verifyAccessToken(token)
+      return payload?.sub ?? undefined
+    } catch {
+      return undefined
+    }
+  }
+
+  googleInit = async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const state = this.oauthService.generateState()
+      const { codeVerifier, codeChallenge } = this.oauthService.generatePKCE()
+
+      await this.oauthService.saveStateAndVerifier(state, codeVerifier)
+      const url = this.oauthService.getGoogleAuthUrl(state, codeChallenge)
+
+      success(res, { url })
+    } catch (err) {
+      next(err)
+    }
+  }
+
+  githubInit = async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const state = this.oauthService.generateState()
+
+      await this.oauthService.saveStateAndVerifier(state)
+      const url = this.oauthService.getGitHubAuthUrl(state)
+
+      success(res, { url })
+    } catch (err) {
+      next(err)
+    }
+  }
+
+  googleCallback = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const { code, state } = req.query
+      if (typeof code !== 'string' || typeof state !== 'string') {
+        throw new AppError('Query parameters code and state are required', 400)
+      }
+
+      // Check that state exists inside redis cache to verify request validity
+      const codeVerifier = await this.oauthService.getVerifierAndValidateState(state, true)
+      if (!codeVerifier) {
+        throw new AppError('PKCE verification code missing from state cache', 400)
+      }
+
+      // Redirect to frontend callback route with code and state parameters to run exchange
+      const frontendRedirectUrl = `${env.CLIENT_URL}/oauth/callback/google?code=${code}&state=${state}`
+      res.redirect(frontendRedirectUrl)
+    } catch (err) {
+      next(err)
+    }
+  }
+
+  githubCallback = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const { code, state } = req.query
+      if (typeof code !== 'string' || typeof state !== 'string') {
+        throw new AppError('Query parameters code and state are required', 400)
+      }
+
+      // Verify that state exists in redis cache
+      await this.oauthService.getVerifierAndValidateState(state, true)
+
+      // Redirect to frontend callback route with code and state parameters
+      const frontendRedirectUrl = `${env.CLIENT_URL}/oauth/callback/github?code=${code}&state=${state}`
+      res.redirect(frontendRedirectUrl)
+    } catch (err) {
+      next(err)
+    }
+  }
+
+  googleExchange = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const { code, state } = req.body
+      if (typeof code !== 'string' || typeof state !== 'string') {
+        throw new AppError('Body parameters code and state are required', 400)
+      }
+
+      const codeVerifier = await this.oauthService.getVerifierAndValidateState(state)
+      if (!codeVerifier) {
+        throw new AppError('PKCE verification code missing from state cache', 400)
+      }
+
+      // If an authenticated user initiated this (account linking), extract their userId
+      const existingUserId = this.extractUserIdFromAuthHeader(req)
+
+      const { user, accessToken, refreshToken } = await this.oauthService.handleGoogleCallback(
+        code,
+        codeVerifier,
+        existingUserId
+      )
+
+      res.cookie('refreshToken', refreshToken, COOKIE_OPTIONS)
+
+      await this.auditService.log({
+        userId: user._id.toString(),
+        event: AuditEvent.OAUTH_LOGIN,
+        ip: req.ip || 'unknown',
+        userAgent: req.headers['user-agent'] || 'unknown',
+        requestId: req.headers['x-request-id'] as string,
+        metadata: { provider: 'google', linked: !!existingUserId },
+      })
+
+      success(res, { accessToken, user })
+    } catch (err) {
+      next(err)
+    }
+  }
+
+  githubExchange = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const { code, state } = req.body
+      if (typeof code !== 'string' || typeof state !== 'string') {
+        throw new AppError('Body parameters code and state are required', 400)
+      }
+
+      await this.oauthService.getVerifierAndValidateState(state)
+
+      // If an authenticated user initiated this (account linking), extract their userId
+      const existingUserId = this.extractUserIdFromAuthHeader(req)
+
+      const { user, accessToken, refreshToken } = await this.oauthService.handleGitHubCallback(
+        code,
+        existingUserId
+      )
+
+      res.cookie('refreshToken', refreshToken, COOKIE_OPTIONS)
+
+      await this.auditService.log({
+        userId: user._id.toString(),
+        event: AuditEvent.OAUTH_LOGIN,
+        ip: req.ip || 'unknown',
+        userAgent: req.headers['user-agent'] || 'unknown',
+        requestId: req.headers['x-request-id'] as string,
+        metadata: { provider: 'github', linked: !!existingUserId },
+      })
+
+      success(res, { accessToken, user })
+    } catch (err) {
+      next(err)
+    }
+  }
+}

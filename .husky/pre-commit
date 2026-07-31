@@ -1,0 +1,2 @@
+# Run lint-staged: only lint/format files staged for this commit
+npx lint-staged

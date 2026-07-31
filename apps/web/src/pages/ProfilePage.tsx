@@ -1,0 +1,348 @@
+import React, { useState } from 'react'
+import { useAuthStore } from '../store/authStore'
+import { userService } from '../services/user.service'
+import { api } from '../services/api'
+import { Input } from '../components/ui/Input'
+import { Button } from '../components/ui/Button'
+import { Toast } from '../components/ui/Toast'
+
+export function ProfilePage() {
+  const { user, setAuth, accessToken, clearAuth } = useAuthStore()
+  const [name, setName] = useState(user?.name || '')
+  const [loading, setLoading] = useState(false)
+  const [toastMsg, setToastMsg] = useState('')
+  const [toastType, setToastType] = useState<'success' | 'error'>('success')
+
+  const handleUpdateProfile = async (e: React.SyntheticEvent) => {
+    e.preventDefault()
+    setLoading(true)
+    setToastMsg('')
+    try {
+      const updatedUser = await userService.updateProfile({ name })
+      if (accessToken) {
+        setAuth(updatedUser, accessToken)
+      }
+      setToastType('success')
+      setToastMsg('Profile successfully updated.')
+    } catch (err: any) {
+      setToastType('error')
+      setToastMsg(err.response?.data?.message || 'Failed to update profile.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleDeleteAccount = async () => {
+    if (
+      !window.confirm(
+        'CRITICAL WARNING: This will permanently delete your identity, credentials, and all active sessions. This action is irreversible. Proceed?'
+      )
+    ) {
+      return
+    }
+    try {
+      await userService.deleteAccount()
+      clearAuth()
+      window.location.href = '/login'
+    } catch (err: any) {
+      setToastType('error')
+      setToastMsg(err.response?.data?.message || 'Failed to delete account.')
+    }
+  }
+
+  return (
+    <div className="flex flex-col gap-8 max-w-2xl mx-auto">
+      {toastMsg ? (
+        <Toast
+          message={toastMsg}
+          type={toastType}
+          isVisible={!!toastMsg}
+          onClose={() => {
+            setToastMsg('')
+          }}
+        />
+      ) : null}
+
+      <div className="flex flex-col gap-1 border-b border-slate-800 pb-4">
+        <h1 className="text-2xl font-extrabold text-slate-100 uppercase tracking-wider">
+          Profile Settings
+        </h1>
+        <p className="text-sm text-slate-400">Modify your cryptographic user identity metadata.</p>
+      </div>
+
+      <div className="bg-[#0f172a]/70 border border-slate-800 rounded-xl p-6 backdrop-blur-md flex flex-col gap-6">
+        <div className="flex items-center gap-4">
+          <div className="w-16 h-16 rounded-full bg-indigo-600/20 border-2 border-indigo-500 flex items-center justify-center text-xl font-bold text-indigo-400 shadow-[0_0_20px_rgba(99,102,241,0.2)] overflow-hidden">
+            {user?.avatar ? (
+              <img src={user.avatar} alt="Avatar" className="w-full h-full object-cover" />
+            ) : (
+              user?.name?.slice(0, 2).toUpperCase() || 'US'
+            )}
+          </div>
+          <div className="flex flex-col gap-1">
+            <h3 className="text-lg font-bold text-slate-200">{user?.name}</h3>
+            <span className="text-xs text-slate-500 uppercase font-mono tracking-wider">
+              ID: {user?.id}
+            </span>
+            <input
+              type="file"
+              id="avatar-upload"
+              accept="image/png, image/jpeg, image/webp"
+              className="hidden"
+              onChange={async (e) => {
+                const file = e.target.files?.[0]
+                if (!file) return
+
+                // Enforce max file size: 2MB client side
+                const maxBytes = 2 * 1024 * 1024
+                if (file.size > maxBytes) {
+                  setToastType('error')
+                  setToastMsg('Image size too large. Maximum size is 2MB.')
+                  return
+                }
+
+                // Verify file format type
+                const validTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp']
+                if (!validTypes.includes(file.type)) {
+                  setToastType('error')
+                  setToastMsg('Invalid file format. Please upload PNG, JPG, or WEBP.')
+                  return
+                }
+
+                setLoading(true)
+                setToastMsg('')
+                try {
+                  const reader = new FileReader()
+                  reader.onload = async () => {
+                    const base64 = reader.result as string
+                    const updatedUser = await userService.updateProfile({ avatar: base64 })
+                    if (accessToken) {
+                      setAuth(updatedUser, accessToken)
+                    }
+                    setToastType('success')
+                    setToastMsg('Profile photo updated successfully.')
+                  }
+                  reader.readAsDataURL(file)
+                } catch (err: any) {
+                  setToastType('error')
+                  setToastMsg(err.response?.data?.message || 'Failed to upload photo.')
+                } finally {
+                  setLoading(false)
+                }
+              }}
+            />
+            <button
+              onClick={() => {
+                document.getElementById('avatar-upload')?.click()
+              }}
+              className="text-left text-xs text-indigo-400 hover:text-indigo-300 font-bold tracking-wide uppercase mt-1"
+            >
+              Upload Photo
+            </button>
+            <span className="text-[10px] text-slate-500 mt-0.5">
+              Supports PNG, JPG, WEBP. Max 2MB.
+            </span>
+          </div>
+        </div>
+
+        <form onSubmit={handleUpdateProfile} className="flex flex-col gap-4">
+          <Input
+            label="Email Address (Permanent)"
+            type="email"
+            value={user?.email || ''}
+            disabled
+            className="opacity-60 cursor-not-allowed bg-slate-900/60"
+          />
+
+          <Input
+            label="Full Display Name"
+            type="text"
+            value={name}
+            onChange={(e) => {
+              setName(e.target.value)
+            }}
+            required
+            placeholder="Your name"
+          />
+
+          <div className="flex gap-2 justify-end mt-2">
+            <Button type="submit" isLoading={loading}>
+              Save Changes
+            </Button>
+          </div>
+        </form>
+      </div>
+
+      {/* Connected Accounts Section */}
+      <div className="bg-[#0f172a]/70 border border-slate-800 rounded-xl p-6 backdrop-blur-md flex flex-col gap-4">
+        <h3 className="text-base font-bold text-slate-100 uppercase tracking-wider">
+          Connected Accounts
+        </h3>
+        <p className="text-xs text-slate-400">
+          Manage OAuth linkage for seamless passwordless authentication.
+        </p>
+        <div className="flex flex-col gap-3 mt-2">
+          {['google', 'github'].map((provider) => {
+            const isConnected = user?.linkedProviders?.includes(provider)
+            return (
+              <div
+                key={provider}
+                className="flex flex-col sm:flex-row gap-3 sm:gap-0 justify-between sm:items-center bg-[#0b0f19] border border-slate-850 p-4 rounded-lg"
+              >
+                <span className="text-xs font-bold uppercase text-slate-200 tracking-wider">
+                  {provider}
+                </span>
+                <div className="flex items-center gap-3 justify-between sm:justify-start">
+                  <span
+                    className={`text-xs px-2 py-0.5 rounded font-semibold ${isConnected ? 'bg-emerald-500/10 border border-emerald-500/20 text-emerald-400' : 'bg-slate-800/40 text-slate-500'}`}
+                  >
+                    {isConnected ? 'Connected ✅' : 'Disconnected'}
+                  </span>
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    className="text-xs py-1 px-3"
+                    onClick={async () => {
+                      if (isConnected) {
+                        // Disconnect — call the real unlink API
+                        try {
+                          setLoading(true)
+                          const updatedUser = await api.delete(`/users/me/providers/${provider}`)
+                          if (accessToken) {
+                            setAuth(updatedUser.data.data, accessToken)
+                          }
+                          setToastType('success')
+                          setToastMsg(
+                            `${provider.charAt(0).toUpperCase() + provider.slice(1)} account disconnected successfully.`
+                          )
+                        } catch (err: any) {
+                          setToastType('error')
+                          setToastMsg(
+                            err.response?.data?.message || 'Failed to disconnect provider.'
+                          )
+                        } finally {
+                          setLoading(false)
+                        }
+                      } else {
+                        // Connect — trigger OAuth initiation flow
+                        try {
+                          const oauthResponse = await api.get(`/oauth/${provider}`)
+                          const { url } = oauthResponse.data.data
+                          window.location.href = url
+                        } catch (err: any) {
+                          setToastType('error')
+                          setToastMsg('Failed to initiate OAuth flow.')
+                        }
+                      }
+                    }}
+                  >
+                    {isConnected ? 'Disconnect' : 'Connect'}
+                  </Button>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      </div>
+
+      {/* Password Section (Mocked Change Password form) */}
+      <div className="bg-[#0f172a]/70 border border-slate-800 rounded-xl p-6 backdrop-blur-md flex flex-col gap-4">
+        <h3 className="text-base font-bold text-slate-100 uppercase tracking-wider">
+          Change Password
+        </h3>
+        <form
+          onSubmit={async (e) => {
+            e.preventDefault()
+            const target = e.target as any
+            const oldPass = target.oldPassword.value
+            const newPass = target.newPassword.value
+            const confirmPass = target.confirmPassword.value
+
+            if (!oldPass || !newPass || !confirmPass) {
+              setToastType('error')
+              setToastMsg('All password fields are required.')
+              return
+            }
+
+            if (newPass.length < 8) {
+              setToastType('error')
+              setToastMsg('New password must be at least 8 characters long.')
+              return
+            }
+
+            if (newPass !== confirmPass) {
+              setToastType('error')
+              setToastMsg('New passwords do not match.')
+              return
+            }
+
+            setLoading(true)
+            setToastMsg('')
+            try {
+              // Submit password patch update payload to the backend with old password verifier
+              const updatedUser = await userService.updateProfile({
+                password: newPass,
+                oldPassword: oldPass,
+              })
+              if (accessToken) {
+                setAuth(updatedUser, accessToken)
+              }
+              setToastType('success')
+              setToastMsg('Password updated successfully.')
+              target.reset()
+            } catch (err: any) {
+              setToastType('error')
+              setToastMsg(err.response?.data?.message || 'Failed to update password.')
+            } finally {
+              setLoading(false)
+            }
+          }}
+          className="flex flex-col gap-4"
+        >
+          <Input name="oldPassword" label="Old Password" type="password" placeholder="••••••••" />
+          <Input name="newPassword" label="New Password" type="password" placeholder="••••••••" />
+          <Input
+            name="confirmPassword"
+            label="Confirm New Password"
+            type="password"
+            placeholder="••••••••"
+          />
+          {toastMsg && (
+            <div
+              className={`text-xs px-3 py-2 rounded border mt-2 ${
+                toastType === 'success'
+                  ? 'bg-emerald-500/10 border-emerald-500/25 text-emerald-400'
+                  : 'bg-rose-500/10 border-rose-500/25 text-rose-400'
+              }`}
+            >
+              {toastMsg}
+            </div>
+          )}
+          <div className="flex justify-end mt-2">
+            <Button type="submit" isLoading={loading}>
+              Update Password
+            </Button>
+          </div>
+        </form>
+      </div>
+
+      {/* Danger Zone */}
+      <div className="bg-rose-950/20 border border-rose-900/50 rounded-xl p-6 backdrop-blur-md flex flex-col gap-4">
+        <div className="flex flex-col gap-1">
+          <h3 className="text-base font-bold text-rose-400 uppercase tracking-wider">
+            Danger Zone
+          </h3>
+          <p className="text-xs text-slate-400">
+            Once you delete your account, there is no going back. Please be absolutely certain.
+          </p>
+        </div>
+
+        <div className="flex justify-start">
+          <Button variant="danger" className="text-xs" onClick={handleDeleteAccount}>
+            Delete Cryptographic Identity
+          </Button>
+        </div>
+      </div>
+    </div>
+  )
+}
