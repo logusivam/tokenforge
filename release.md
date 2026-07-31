@@ -35,3 +35,24 @@ If a container build fails or fails to pass health status verifications:
 2. **Railway Engine Fallback**: Integrates zero-downtime healthcheck checks. If
    dynamic healthchecks fail (`/api/v1/health`), Railway rolls back to the
    previous stable build image automatically.
+
+---
+
+## 🤖 Automated Releases via Semantic Release
+
+Releases are fully automated via `semantic-release` on push/merge to `main` and
+`dev` branches.
+
+### How it Works:
+
+1. **Analyze Commits**: Commits are parsed using Conventional Commits rules:
+   - `feat(...)` -> Bumps **Minor** version.
+   - `fix(...)` or `perf(...)` -> Bumps **Patch** version.
+   - Commits containing `BREAKING CHANGE:` -> Bumps **Major** version.
+2. **Generate Notes**: Release notes are generated from the commit history.
+3. **Update Changelog**: `CHANGELOG.md` is updated automatically.
+4. **Push Release Commit**: The updated `package.json`, `package-lock.json`, and
+   `CHANGELOG.md` are committed back to Git (prefixed with `chore(release):` and
+   containing `[skip ci]` to prevent build loops).
+5. **Publish Tag & GitHub Release**: A new git tag is created, and a release
+   with changelog details is published on GitHub.
