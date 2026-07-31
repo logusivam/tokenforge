@@ -21,8 +21,10 @@
 
 ## Live Demo
 
-🔗 [tokenforge.dev](https://tokenforge.dev) ·
-[API Docs](https://tokenforge-api.railway.app/api/docs)
+🔗 **Frontend**:
+[tokenforge-dev.vercel.app](https://tokenforge-dev.vercel.app)  
+🔗 **API Docs (Swagger)**:
+[tokenforge-api-ecix.onrender.com/api/docs](https://tokenforge-api-ecix.onrender.com/api/docs)
 
 ---
 
@@ -87,12 +89,33 @@ graph TD
 ```
 tokenforge/
 ├── apps/
-│   ├── api/          # TypeScript Express API Backend
-│   └── web/          # React Vite SPA Frontend
-├── packages/         # Shared Monorepo Workspaces
-├── docus/            # Architectural documentation
-├── docker-compose.yml
-└── package.json
+│   ├── api/                    # TypeScript Express API Backend
+│   │   ├── src/
+│   │   │   ├── config/         # DB, Redis, Sentry, and Swagger setups
+│   │   │   ├── middleware/     # Rate limiter, RBAC, Sanitization, Error handler
+│   │   │   ├── modules/        # Auth, OAuth providers, Users, RBAC, Support, Token modules
+│   │   │   ├── shared/         # Constants, custom logger, response utilities
+│   │   │   └── server.ts       # Application bootstrap and server entry
+│   │   ├── tests/              # Unit & Integration test suites
+│   │   ├── package.json
+│   │   └── tsconfig.json
+│   └── web/                    # React Vite SPA Frontend
+│       ├── public/             # Static assets (Favicons, Logo, robots.txt, sitemap.xml, security.txt)
+│       ├── src/
+│       │   ├── components/     # UI forms, navigation layout, feedback widgets
+│       │   ├── hooks/          # React hooks (useAuth, etc.)
+│       │   ├── pages/          # Auth, Login, Dashboard, Admin, Profile pages
+│       │   ├── router/         # ProtectedRoutes and react-router tree
+│       │   ├── services/       # Axios API client handlers
+│       │   ├── store/          # Zustand global auth state management
+│       │   └── main.tsx        # React client entry point
+│       ├── package.json
+│       ├── tailwind.config.js
+│       └── vite.config.ts
+├── packages/                   # Shared Monorepo workspaces / helper utilities
+├── docus/                      # Architecture and system documentation
+├── docker-compose.yml          # Local database orchestrations (MongoDB & Redis)
+└── package.json                # Monorepo workspace configuration
 ```
 
 </details>

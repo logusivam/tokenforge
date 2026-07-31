@@ -2,10 +2,10 @@
 
 ## Supported Versions
 
-| Version | Supported |
-|---|---|
-| Latest (`main`) | ✅ |
-| Older tags | ❌ No backport patches |
+| Version         | Supported              |
+| --------------- | ---------------------- |
+| Latest (`main`) | ✅                     |
+| Older tags      | ❌ No backport patches |
 
 ## Reporting a Vulnerability
 
@@ -15,21 +15,23 @@
 2. Click **"Report a vulnerability"**
 3. Fill in the template
 
-Send details to: **security@tokenforge.dev**  
-PGP key available at: `https://tokenforge.dev/.well-known/security.txt`
+Send details to: **devbridgeenquirz@gmail.com**  
+PGP key available at:
+`https://tokenforge-dev.vercel.app/.well-known/security.txt`
 
 ## Response Timeline
 
-| Stage | SLA |
-|---|---|
-| Acknowledgement | 48 hours |
-| Severity assessment | 5 business days |
+| Stage               | SLA                                 |
+| ------------------- | ----------------------------------- |
+| Acknowledgement     | 48 hours                            |
+| Severity assessment | 5 business days                     |
 | Fix + patch release | 14 days (critical) / 30 days (high) |
-| Public disclosure | 90 days after fix (coordinated) |
+| Public disclosure   | 90 days after fix (coordinated)     |
 
 ## Scope
 
 In scope for responsible disclosure:
+
 - Authentication bypass
 - Refresh token theft or reuse bypass
 - RBAC privilege escalation
@@ -39,6 +41,7 @@ In scope for responsible disclosure:
 - NoSQL injection
 
 Out of scope:
+
 - Denial of service via resource exhaustion (no SLA)
 - Social engineering
 - Issues in third-party dependencies (report to upstream)
