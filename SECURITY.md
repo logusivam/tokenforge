@@ -16,7 +16,8 @@
 3. Fill in the template
 
 Send details to: **devbridgeenquirz@gmail.com**  
-PGP key available at: `https://tokenforge.dev/.well-known/security.txt`
+PGP key available at:
+`https://tokenforge-dev.vercel.app/.well-known/security.txt`
 
 ## Response Timeline
 
