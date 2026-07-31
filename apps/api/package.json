@@ -49,7 +49,7 @@
     "@vitest/coverage-v8": "4.1.10",
     "supertest": "^7.1.0",
     "tsx": "^4.23.0",
-    "vitest": "^3.2.4"
+    "vitest": "^4.1.10"
   },
   "_moduleAliases": {
     "@": "dist"
