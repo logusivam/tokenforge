@@ -58,7 +58,7 @@ jobs:
           node-version: '22'
           cache: 'npm'
       - run: npm ci
-      - run: npx turbo run test -- --coverage
+      - run: npx turbo run test
       - uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
