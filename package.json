@@ -5,7 +5,7 @@
   "description": "JWT auth system with refresh token rotation, OAuth2 PKCE, and RBAC — built from scratch",
   "author": "Loganathan <logusivam@github>",
   "license": "MIT",
-  "homepage": "https://tokenforge.dev",
+  "homepage": "https://tokenforge-dev.vercel.app",
   "repository": {
     "type": "git",
     "url": "https://github.com/logusivam/tokenforge.git"
