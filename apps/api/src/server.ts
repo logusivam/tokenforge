@@ -29,6 +29,7 @@ import { usersRouter } from '@/modules/users/user.routes'
 import { adminRouter } from '@/modules/admin/admin.routes'
 import { supportRouter } from '@/modules/support/support.routes'
 import { seedRbac } from '@/modules/rbac/rbac.seed'
+import { setupSwagger } from '@/config/swagger'
 
 // ── Sentry (must init before express) ──────────────────────────────
 if (env.SENTRY_DSN) {
@@ -125,6 +126,9 @@ app.use('/api/v1/users', usersRouter)
 app.use('/api/v1/admin', adminRouter)
 app.use('/api/v1/support', supportRouter)
 
+// Swagger UI Docs (Available in all environments for reference)
+setupSwagger(app)
+
 // ── 404 handler ──────────────────────────────────────────────────────
 app.use((_req, res) => {
   res.status(404).json({ status: 'error', statusCode: 404, message: 'Route not found' })
@@ -139,12 +143,6 @@ async function bootstrap(): Promise<void> {
   await seedRbac()
   const redis = await connectRedis()
   app.set('redis', redis) // Attach to app for health check + middleware access
-
-  // Swagger UI (development + staging only)
-  if (env.NODE_ENV !== 'production') {
-    const { setupSwagger } = await import('./config/swagger.js')
-    setupSwagger(app)
-  }
 
   const server = app.listen(env.PORT, () => {
     logger.info(`TokenForge API running on port ${env.PORT}`, {
