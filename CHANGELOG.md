@@ -10,9 +10,6 @@ Versioning: [Semantic Versioning](https://semver.org/)
 
 ## [Unreleased]
 
-- Initial release: JWT auth, refresh token rotation, OAuth2 PKCE
-  (Google/GitHub), RBAC
-
 ---
 
 ## Types of Changes
