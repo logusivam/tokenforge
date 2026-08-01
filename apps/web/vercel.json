@@ -2,7 +2,11 @@
   "cleanUrls": true,
   "rewrites": [
     {
-      "source": "/((?!assets/|robots\\.txt|sitemap\\.xml|\\.well-known/|.*\\.(?:png|jpg|jpeg|gif|svg|ico|txt|js|css)$).*)",
+      "source": "/.well-known/security.txt",
+      "destination": "/well-known/security.txt"
+    },
+    {
+      "source": "/((?!assets/|robots\\.txt|sitemap\\.xml|well-known/|.*\\.(?:png|jpg|jpeg|gif|svg|ico|txt|js|css)$).*)",
       "destination": "/index.html"
     }
   ]

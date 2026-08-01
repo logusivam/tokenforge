@@ -1,43 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    
-    <!-- Primary SEO Meta Tags -->
-    <title>TokenForge — JWT Auth System Built From Scratch | No Auth0</title>
-    <meta name="description" content="Open-source JWT authentication system with refresh token rotation, OAuth2 (Google/GitHub), and RBAC. Built from scratch with Node.js, Express, Redis, and MongoDB. No Auth0. No Clerk." />
-    <meta name="keywords" content="JWT authentication, refresh token rotation, OAuth2, RBAC, Node.js auth, custom auth system, token forge, JWT RS256, token family tracking, rate limiting, csrf protection, express security" />
-    <meta name="robots" content="index, follow" />
-    <link rel="canonical" href="https://tokenforge.dev" />
 
-    <!-- Favicon & Icon Variants -->
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
-    <link rel="icon" type="image/png" sizes="64x64" href="/favicon-64.png" />
-    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96.png" />
-    <link rel="icon" type="image/png" sizes="128x128" href="/favicon-128.png" />
-    <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png" />
-    <link rel="icon" type="image/png" sizes="256x256" href="/favicon-256.png" />
-    <link rel="icon" type="image/png" sizes="512x512" href="/favicon-512.png" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/favicon-180.png" />
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://tokenforge.dev" />
-    <meta property="og:title" content="TokenForge — Forge Your Auth. Own Every Token." />
-    <meta property="og:description" content="JWT + Refresh Token Rotation + OAuth2 + RBAC. Full custom auth system. Zero third-party dependencies." />
-    <meta property="og:image" content="https://tokenforge.dev/og-image.png" />
+  <!-- Primary SEO Meta Tags -->
+  <title>TokenForge — JWT Auth System Built From Scratch | No Auth0</title>
+  <meta name="description"
+    content="Open-source JWT authentication system with refresh token rotation, OAuth2 (Google/GitHub), and RBAC. Built from scratch with Node.js, Express, Redis, and MongoDB. No Auth0. No Clerk." />
+  <meta name="keywords"
+    content="JWT authentication, refresh token rotation, OAuth2, RBAC, Node.js auth, custom auth system, token forge, JWT RS256, token family tracking, rate limiting, csrf protection, express security" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://tokenforge-dev.vercel.app" />
 
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:url" content="https://tokenforge.dev" />
-    <meta name="twitter:title" content="TokenForge — JWT Auth From Scratch" />
-    <meta name="twitter:description" content="Refresh token rotation · OAuth2 PKCE · RBAC · RS256. Built without Auth0." />
-    <meta name="twitter:image" content="https://tokenforge.dev/og-image.png" />
+  <!-- Favicon & Icon Variants -->
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="64x64" href="/favicon-64.png" />
+  <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96.png" />
+  <link rel="icon" type="image/png" sizes="128x128" href="/favicon-128.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png" />
+  <link rel="icon" type="image/png" sizes="256x256" href="/favicon-256.png" />
+  <link rel="icon" type="image/png" sizes="512x512" href="/favicon-512.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon-180.png" />
 
-    <!-- Structured Data (JSON-LD) -->
-    <script type="application/ld+json">
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://tokenforge-dev.vercel.app" />
+  <meta property="og:title" content="TokenForge — Forge Your Auth. Own Every Token." />
+  <meta property="og:description"
+    content="JWT + Refresh Token Rotation + OAuth2 + RBAC. Full custom auth system. Zero third-party dependencies." />
+  <meta property="og:image" content="https://tokenforge-dev.vercel.app/og-image.png" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:url" content="https://tokenforge-dev.vercel.app" />
+  <meta name="twitter:title" content="TokenForge — JWT Auth From Scratch" />
+  <meta name="twitter:description"
+    content="Refresh token rotation · OAuth2 PKCE · RBAC · RS256. Built without Auth0." />
+  <meta name="twitter:image" content="https://tokenforge-dev.vercel.app/og-image.png" />
+
+  <!-- Structured Data (JSON-LD) -->
+  <script type="application/ld+json">
       {
         "@context": "https://schema.org",
         "@type": "SoftwareApplication",
@@ -61,79 +66,94 @@
       }
     </script>
 
-    <!-- Preloader Animation Styles -->
-    <style>
-      #preloader {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: #0A0A0F;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        z-index: 99999;
-        transition: opacity 0.5s ease, transform 0.5s ease;
-      }
-      .preloader-logo {
-        width: 120px;
-        height: 120px;
-        animation: pulseLogo 2s infinite ease-in-out;
-        border-radius: 24px;
-        box-shadow: 0 0 35px rgba(99, 102, 241, 0.25);
-      }
-      .preloader-spinner {
-        margin-top: 24px;
-        border: 3px solid rgba(99, 102, 241, 0.1);
-        border-top: 3px solid #6366f1;
-        border-radius: 50%;
-        width: 32px;
-        height: 32px;
-        animation: spinPreloader 1s linear infinite;
-      }
-      @keyframes pulseLogo {
-        0%, 100% {
-          transform: scale(0.95);
-          filter: drop-shadow(0 0 15px rgba(99, 102, 241, 0.2));
-        }
-        50% {
-          transform: scale(1.05);
-          filter: drop-shadow(0 0 35px rgba(99, 102, 241, 0.45));
-        }
-      }
-      @keyframes spinPreloader {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-      }
-      .preloader-fade-out {
-        opacity: 0 !important;
-        pointer-events: none !important;
-      }
-    </style>
-  </head>
-  <body class="bg-[#0b0f19] text-[#f8fafc] min-h-screen font-sans">
-    <!-- Preloader Animation Screen -->
-    <div id="preloader">
-      <img class="preloader-logo" src="/logo-1024x1024.png" alt="TokenForge Logo" />
-      <div class="preloader-spinner"></div>
-    </div>
+  <!-- Preloader Animation Styles -->
+  <style>
+    #preloader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #0A0A0F;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 99999;
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
 
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+    .preloader-logo {
+      width: 120px;
+      height: 120px;
+      animation: pulseLogo 2s infinite ease-in-out;
+      border-radius: 24px;
+      box-shadow: 0 0 35px rgba(99, 102, 241, 0.25);
+    }
 
-    <!-- Preloader Dismissal script -->
-    <script>
-      window.addEventListener('load', function() {
-        const preloader = document.getElementById('preloader');
-        if (preloader) {
-          preloader.classList.add('preloader-fade-out');
-          setTimeout(() => {
-            preloader.style.display = 'none';
-          }, 500);
-        }
-      });
-    </script>
-  </body>
+    .preloader-spinner {
+      margin-top: 24px;
+      border: 3px solid rgba(99, 102, 241, 0.1);
+      border-top: 3px solid #6366f1;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      animation: spinPreloader 1s linear infinite;
+    }
+
+    @keyframes pulseLogo {
+
+      0%,
+      100% {
+        transform: scale(0.95);
+        filter: drop-shadow(0 0 15px rgba(99, 102, 241, 0.2));
+      }
+
+      50% {
+        transform: scale(1.05);
+        filter: drop-shadow(0 0 35px rgba(99, 102, 241, 0.45));
+      }
+    }
+
+    @keyframes spinPreloader {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    .preloader-fade-out {
+      opacity: 0 !important;
+      pointer-events: none !important;
+    }
+  </style>
+</head>
+
+<body class="bg-[#0b0f19] text-[#f8fafc] min-h-screen font-sans">
+  <!-- Preloader Animation Screen -->
+  <div id="preloader">
+    <img class="preloader-logo" src="/logo-1024x1024.png" alt="TokenForge Logo" />
+    <div class="preloader-spinner"></div>
+  </div>
+
+  <div id="root"></div>
+  <script type="module" src="/src/main.tsx"></script>
+
+  <!-- Preloader Dismissal script -->
+  <script>
+    window.addEventListener('load', function () {
+      const preloader = document.getElementById('preloader');
+      if (preloader) {
+        preloader.classList.add('preloader-fade-out');
+        setTimeout(() => {
+          preloader.style.display = 'none';
+        }, 500);
+      }
+    });
+  </script>
+</body>
+
 </html>
