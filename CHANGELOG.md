@@ -1,3 +1,5 @@
+## [1.0.2](https://github.com/logusivam/tokenforge/compare/v1.0.1...v1.0.2) (2026-07-31)
+
 # Changelog
 
 All notable changes to TokenForge are documented here.  
@@ -8,11 +10,13 @@ Versioning: [Semantic Versioning](https://semver.org/)
 
 ## [Unreleased]
 
-- Initial release: JWT auth, refresh token rotation, OAuth2 PKCE (Google/GitHub), RBAC
+- Initial release: JWT auth, refresh token rotation, OAuth2 PKCE
+  (Google/GitHub), RBAC
 
 ---
 
 ## Types of Changes
+
 - `Added` — new features
 - `Changed` — changes to existing functionality
 - `Deprecated` — features to be removed
