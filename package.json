@@ -1,6 +1,6 @@
 {
   "name": "tokenforge",
-  "version": "0.0.0",
+  "version": "1.0.3",
   "private": true,
   "description": "JWT auth system with refresh token rotation, OAuth2 PKCE, and RBAC — built from scratch",
   "author": "Loganathan <logusivam@github>",
